@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, Filter } from 'lucide-react';
 import MemoryCard from '@/components/MemoryCard';
 import AIInsights from '@/components/AIInsights';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [memories, setMemories] = useState([
     {
       id: '1',
@@ -36,6 +38,14 @@ const Dashboard = () => {
     setMemories(memories.filter(memory => memory.id !== id));
   };
 
+  const handleAddMemory = () => {
+    navigate('/add-memory');
+  };
+
+  const handleSearch = () => {
+    navigate('/search');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-dark">
       {/* Header */}
@@ -52,6 +62,7 @@ const Dashboard = () => {
             <div className="flex items-center space-x-4">
               <Button
                 size="sm"
+                onClick={handleSearch}
                 className="bg-white/10 border border-white/30 text-white hover:bg-white/20 hover:border-white/50"
               >
                 <Search className="h-4 w-4 mr-2" />
@@ -59,6 +70,7 @@ const Dashboard = () => {
               </Button>
               <Button
                 size="sm"
+                onClick={handleAddMemory}
                 className="bg-gradient-purple hover:opacity-90 text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -135,7 +147,10 @@ const Dashboard = () => {
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">No memories yet</h3>
             <p className="text-gray-300 mb-6">Start building your personal memory database</p>
-            <Button className="bg-gradient-purple hover:opacity-90 text-white">
+            <Button 
+              onClick={handleAddMemory}
+              className="bg-gradient-purple hover:opacity-90 text-white"
+            >
               Add Your First Memory
             </Button>
           </div>
@@ -145,6 +160,7 @@ const Dashboard = () => {
       {/* Floating Action Button (Mobile) */}
       <Button
         size="lg"
+        onClick={handleAddMemory}
         className="fixed bottom-6 right-6 md:hidden bg-gradient-purple hover:opacity-90 text-white rounded-full w-14 h-14 shadow-2xl animate-glow"
       >
         <Plus className="h-6 w-6" />
