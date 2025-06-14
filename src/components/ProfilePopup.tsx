@@ -74,11 +74,16 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
           avatar_url: data.avatar_url || '',
           email: user?.email || ''
         });
-        setPreferences(data.preferences || {
-          theme: 'dark',
-          notifications: true,
-          privacy: 'public'
-        });
+        
+        // Fix the preferences type issue
+        const profilePreferences = data.preferences;
+        if (profilePreferences && typeof profilePreferences === 'object') {
+          setPreferences({
+            theme: profilePreferences.theme || 'dark',
+            notifications: profilePreferences.notifications !== false,
+            privacy: profilePreferences.privacy || 'public'
+          });
+        }
       } else {
         // Create profile if it doesn't exist
         const { data: newProfile, error: insertError } = await supabase

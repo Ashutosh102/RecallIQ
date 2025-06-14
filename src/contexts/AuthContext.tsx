@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
@@ -31,9 +32,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Handle logout redirect
+        if (event === 'SIGNED_OUT') {
+          // Use setTimeout to ensure state updates are complete
+          setTimeout(() => {
+            const currentPath = window.location.pathname;
+            if (currentPath !== '/' && currentPath !== '/auth') {
+              window.location.href = '/';
+            }
+          }, 100);
+        }
       }
     );
 
