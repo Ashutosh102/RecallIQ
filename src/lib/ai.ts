@@ -1,4 +1,6 @@
 
+import { supabase } from '@/integrations/supabase/client';
+
 // AI service utility for memory processing
 export interface AIMemoryResponse {
   summary: string;
@@ -13,50 +15,109 @@ export interface AISearchResponse {
   suggestedQueries: string[];
 }
 
-// Mock AI service - in production, this would connect to your AI API
+// Real AI service using Groq + LLaMA 3 via Supabase Edge Functions
 export const aiService = {
   async enhanceMemory(description: string, people: string[], existingTags: string[]): Promise<AIMemoryResponse> {
-    // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    console.log('Calling AI enhancement for description:', description.substring(0, 50));
     
-    // Mock AI-enhanced response
-    return {
-      summary: `AI-generated summary: ${description.slice(0, 100)}${description.length > 100 ? '...' : ''}`,
-      keyTopics: ['conversation', 'networking', 'professional'],
-      insights: [
-        'This interaction could lead to future collaboration opportunities',
-        'Consider following up within a week',
-        'Similar interests in technology were identified'
-      ],
-      enhancedTags: [...existingTags, 'ai-enhanced', 'follow-up-needed'],
-    };
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-enhance-memory', {
+        body: {
+          description,
+          people,
+          existingTags
+        }
+      });
+
+      if (error) {
+        console.error('AI enhancement error:', error);
+        throw error;
+      }
+
+      console.log('AI enhancement successful:', data);
+      return data;
+    } catch (error) {
+      console.error('Failed to enhance memory with AI:', error);
+      // Fallback to basic enhancement
+      return {
+        summary: `Summary: ${description.slice(0, 100)}${description.length > 100 ? '...' : ''}`,
+        keyTopics: ['conversation', 'networking'],
+        insights: [
+          'This interaction could be valuable for future networking',
+          'Consider following up within a reasonable timeframe',
+          'Add more context or details when you have time'
+        ],
+        enhancedTags: [...existingTags, 'needs-review'],
+      };
+    }
   },
 
   async searchMemories(query: string, memories: any[]): Promise<AISearchResponse> {
-    // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    console.log('Calling AI search for query:', query);
     
-    // Mock AI search interpretation
-    return {
-      relevantMemories: memories.map(m => m.id),
-      interpretation: `AI interpreted your query "${query}" as searching for professional connections related to technology and development.`,
-      suggestedQueries: [
-        'Show me all developer contacts',
-        'Find recent tech conversations',
-        'Who did I meet at conferences?'
-      ]
-    };
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-search-memories', {
+        body: {
+          query,
+          memories
+        }
+      });
+
+      if (error) {
+        console.error('AI search error:', error);
+        throw error;
+      }
+
+      console.log('AI search successful:', data);
+      return data;
+    } catch (error) {
+      console.error('Failed to search memories with AI:', error);
+      // Fallback to basic text search
+      const basicResults = memories.filter(memory => 
+        memory.title.toLowerCase().includes(query.toLowerCase()) ||
+        memory.summary.toLowerCase().includes(query.toLowerCase()) ||
+        memory.people?.some((person: string) => person.toLowerCase().includes(query.toLowerCase())) ||
+        memory.tags?.some((tag: string) => tag.toLowerCase().includes(query.toLowerCase()))
+      );
+      
+      return {
+        relevantMemories: basicResults.map(m => m.id),
+        interpretation: `Basic text search for "${query}" - AI search temporarily unavailable`,
+        suggestedQueries: [
+          'Show me recent connections',
+          'Find people by profession',
+          'Search by event or location'
+        ]
+      };
+    }
   },
 
   async generateInsights(memories: any[]): Promise<string[]> {
-    // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('Generating AI insights for', memories.length, 'memories');
     
-    // Mock insights
-    return [
-      `You've connected with ${memories.length} people this month`,
-      'Most of your networking happens in tech events',
-      'Consider reaching out to contacts you haven\'t spoken to in 30+ days'
-    ];
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-generate-insights', {
+        body: {
+          memories
+        }
+      });
+
+      if (error) {
+        console.error('AI insights error:', error);
+        throw error;
+      }
+
+      console.log('AI insights successful:', data);
+      return data;
+    } catch (error) {
+      console.error('Failed to generate insights with AI:', error);
+      // Fallback insights
+      return [
+        `You've connected with ${memories.length} people - keep building your network!`,
+        'Consider reaching out to contacts you haven\'t spoken with recently',
+        'Most of your networking happens in professional settings',
+        'Add more context to your memories for better AI insights'
+      ];
+    }
   }
 };
