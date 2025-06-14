@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { User, Settings, LogOut, Camera, Mail, Palette, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -81,15 +82,31 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
         });
         
         // Safely parse preferences with proper typing
-        const userPreferences = data.preferences as UserPreferences | null;
-        setPreferences(userPreferences || {
-          theme: 'dark',
-          notifications: true,
-          privacy: 'public'
-        });
+        try {
+          const userPreferences = data.preferences as unknown as UserPreferences;
+          if (userPreferences && typeof userPreferences === 'object') {
+            setPreferences({
+              theme: userPreferences.theme || 'dark',
+              notifications: userPreferences.notifications ?? true,
+              privacy: userPreferences.privacy || 'public'
+            });
+          } else {
+            setPreferences({
+              theme: 'dark',
+              notifications: true,
+              privacy: 'public'
+            });
+          }
+        } catch {
+          setPreferences({
+            theme: 'dark',
+            notifications: true,
+            privacy: 'public'
+          });
+        }
       } else {
         // Create profile if it doesn't exist
-        const defaultPreferences: UserPreferences = {
+        const defaultPreferences = {
           theme: 'dark',
           notifications: true,
           privacy: 'public'
@@ -103,7 +120,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
               first_name: '',
               last_name: '',
               avatar_url: '',
-              preferences: defaultPreferences
+              preferences: defaultPreferences as any
             }
           ])
           .select()
@@ -131,7 +148,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
           first_name: formData.first_name,
           last_name: formData.last_name,
           avatar_url: formData.avatar_url,
-          preferences: preferences,
+          preferences: preferences as any,
           updated_at: new Date().toISOString()
         })
         .eq('id', user?.id);
