@@ -1,18 +1,35 @@
 
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   const handleGetStarted = () => {
-    navigate('/dashboard');
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
   };
 
   const handleLogoClick = () => {
+    navigate('/');
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
     navigate('/');
   };
 
@@ -41,12 +58,33 @@ const Navbar = () => {
             <button onClick={() => scrollToSection('features')} className="text-gray-300 hover:text-white transition-colors">Features</button>
             <button onClick={() => scrollToSection('pricing')} className="text-gray-300 hover:text-white transition-colors">Pricing</button>
             <button onClick={() => scrollToSection('contact')} className="text-gray-300 hover:text-white transition-colors">Contact</button>
-            <Button 
-              className="bg-gradient-purple hover:opacity-90 text-white font-medium px-6"
-              onClick={handleGetStarted}
-            >
-              Get Started
-            </Button>
+            
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="bg-white/20 border-2 border-white/40 text-white hover:bg-white/30 hover:border-white/60">
+                    <User className="h-4 w-4 mr-2" />
+                    Account
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-dark-bg border-white/20">
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')} className="text-white hover:bg-white/10">
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut} className="text-white hover:bg-white/10">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button 
+                className="bg-gradient-purple hover:opacity-90 text-white font-medium px-6"
+                onClick={handleGetStarted}
+              >
+                Get Started
+              </Button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -68,12 +106,26 @@ const Navbar = () => {
               <button onClick={() => scrollToSection('features')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Features</button>
               <button onClick={() => scrollToSection('pricing')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Pricing</button>
               <button onClick={() => scrollToSection('contact')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Contact</button>
-              <Button 
-                className="bg-gradient-purple hover:opacity-90 text-white font-medium w-full mt-4"
-                onClick={handleGetStarted}
-              >
-                Get Started
-              </Button>
+              
+              {user ? (
+                <>
+                  <button onClick={() => navigate('/dashboard')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Dashboard</button>
+                  <Button 
+                    onClick={handleSignOut}
+                    className="bg-red-600 hover:bg-red-700 text-white font-medium w-full mt-4"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  className="bg-gradient-purple hover:opacity-90 text-white font-medium w-full mt-4"
+                  onClick={handleGetStarted}
+                >
+                  Get Started
+                </Button>
+              )}
             </div>
           </div>
         )}

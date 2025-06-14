@@ -1,13 +1,18 @@
-
 import { Button } from '@/components/ui/button';
 import { ArrowDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Hero = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleGetStarted = () => {
-    navigate('/dashboard');
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
   };
 
   const handleWatchDemo = () => {
@@ -61,7 +66,7 @@ const Hero = () => {
               className="bg-gradient-purple hover:opacity-90 text-white font-semibold px-8 py-4 text-lg rounded-xl glow-effect animate-glow"
               onClick={handleGetStarted}
             >
-              Get Started Free
+              {user ? 'Go to Dashboard' : 'Get Started Free'}
             </Button>
             <Button 
               size="lg" 
