@@ -1,8 +1,15 @@
 
 import { Button } from '@/components/ui/button';
 import { ArrowDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
       {/* Background Effects */}
@@ -27,6 +34,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="bg-gradient-purple hover:opacity-90 text-white font-semibold px-8 py-4 text-lg rounded-xl glow-effect animate-glow"
+              onClick={handleGetStarted}
             >
               Get Started Free
             </Button>

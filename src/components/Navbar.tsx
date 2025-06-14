@@ -2,9 +2,15 @@
 import { useState } from 'react';
 import { User, Search, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/dashboard');
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-dark-bg/80 backdrop-blur-lg border-b border-white/10">
@@ -23,7 +29,10 @@ const Navbar = () => {
             <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
             <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
             <a href="#contact" className="text-gray-300 hover:text-white transition-colors">Contact</a>
-            <Button className="bg-gradient-purple hover:opacity-90 text-white font-medium px-6">
+            <Button 
+              className="bg-gradient-purple hover:opacity-90 text-white font-medium px-6"
+              onClick={handleGetStarted}
+            >
               Get Started
             </Button>
           </div>
@@ -48,7 +57,10 @@ const Navbar = () => {
               <a href="#features" className="text-gray-300 hover:text-white transition-colors py-2">Features</a>
               <a href="#pricing" className="text-gray-300 hover:text-white transition-colors py-2">Pricing</a>
               <a href="#contact" className="text-gray-300 hover:text-white transition-colors py-2">Contact</a>
-              <Button className="bg-gradient-purple hover:opacity-90 text-white font-medium w-full mt-4">
+              <Button 
+                className="bg-gradient-purple hover:opacity-90 text-white font-medium w-full mt-4"
+                onClick={handleGetStarted}
+              >
                 Get Started
               </Button>
             </div>
