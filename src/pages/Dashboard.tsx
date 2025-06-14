@@ -1,9 +1,7 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, Filter } from 'lucide-react';
-import Navbar from '@/components/Navbar';
 import MemoryCard from '@/components/MemoryCard';
 import AIInsights from '@/components/AIInsights';
 
@@ -50,14 +48,15 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-dark">
-      <Navbar />
-      
       {/* Header */}
-      <div className="bg-dark-bg/80 backdrop-blur-lg border-b border-white/10 sticky top-16 z-40">
+      <div className="bg-dark-bg/80 backdrop-blur-lg border-b border-white/10 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <h1 className="text-2xl font-poppins font-bold gradient-text">Dashboard</h1>
+              <div className="w-8 h-8 bg-gradient-purple rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">R</span>
+              </div>
+              <span className="text-xl font-poppins font-bold gradient-text">RecallIQ</span>
             </div>
             
             <div className="flex items-center space-x-4">
@@ -85,9 +84,9 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-poppins font-bold text-white mb-2">
+          <h1 className="text-3xl font-poppins font-bold text-white mb-2">
             Your Memory Dashboard
-          </h2>
+          </h1>
           <p className="text-gray-300">
             {memories.length} memories stored • Never forget important connections again
           </p>

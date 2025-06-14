@@ -2,16 +2,21 @@
 import { useState, useRef } from 'react';
 import { Menu, X, LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ProfilePopup from '@/components/ProfilePopup';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfilePopupOpen, setIsProfilePopupOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const { user, signOut } = useAuth();
   const profileIconRef = useRef<HTMLButtonElement>(null);
 
@@ -24,11 +29,7 @@ const Navbar = () => {
   };
 
   const handleLogoClick = () => {
-    if (user) {
-      navigate('/dashboard');
-    } else {
-      navigate('/');
-    }
+    navigate('/');
   };
 
   const handleSignOut = async () => {
@@ -37,15 +38,9 @@ const Navbar = () => {
   };
 
   const scrollToSection = (sectionId: string) => {
-    // Only scroll if we're on the home page
-    if (location.pathname === '/') {
-      const section = document.getElementById(sectionId);
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      // Navigate to home page first, then scroll
-      navigate('/', { state: { scrollTo: sectionId } });
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMenuOpen(false);
   };
@@ -56,9 +51,6 @@ const Navbar = () => {
     }
     return 'U';
   };
-
-  // Show different navbar styles based on route
-  const isHomePage = location.pathname === '/';
 
   return (
     <>
@@ -75,19 +67,9 @@ const Navbar = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {/* Show navigation links only on home page or when not logged in */}
-              {(isHomePage || !user) && (
-                <>
-                  <button onClick={() => scrollToSection('features')} className="text-gray-300 hover:text-white transition-colors">Features</button>
-                  <button onClick={() => scrollToSection('pricing')} className="text-gray-300 hover:text-white transition-colors">Pricing</button>
-                  <button onClick={() => scrollToSection('contact')} className="text-gray-300 hover:text-white transition-colors">Contact</button>
-                </>
-              )}
-              
-              {/* Show dashboard link when logged in and not on home page */}
-              {user && !isHomePage && (
-                <button onClick={() => navigate('/dashboard')} className="text-gray-300 hover:text-white transition-colors">Dashboard</button>
-              )}
+              <button onClick={() => scrollToSection('features')} className="text-gray-300 hover:text-white transition-colors">Features</button>
+              <button onClick={() => scrollToSection('pricing')} className="text-gray-300 hover:text-white transition-colors">Pricing</button>
+              <button onClick={() => scrollToSection('contact')} className="text-gray-300 hover:text-white transition-colors">Contact</button>
               
               {user ? (
                 <button
@@ -129,14 +111,9 @@ const Navbar = () => {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-white/10 bg-dark-bg/95 backdrop-blur-lg">
               <div className="flex flex-col space-y-3">
-                {/* Show navigation links only on home page or when not logged in */}
-                {(isHomePage || !user) && (
-                  <>
-                    <button onClick={() => scrollToSection('features')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Features</button>
-                    <button onClick={() => scrollToSection('pricing')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Pricing</button>
-                    <button onClick={() => scrollToSection('contact')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Contact</button>
-                  </>
-                )}
+                <button onClick={() => scrollToSection('features')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Features</button>
+                <button onClick={() => scrollToSection('pricing')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Pricing</button>
+                <button onClick={() => scrollToSection('contact')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Contact</button>
                 
                 {user ? (
                   <>
@@ -155,9 +132,7 @@ const Navbar = () => {
                       </Avatar>
                       <span>Profile</span>
                     </button>
-                    {!isHomePage && (
-                      <button onClick={() => navigate('/dashboard')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Dashboard</button>
-                    )}
+                    <button onClick={() => navigate('/dashboard')} className="text-gray-300 hover:text-white transition-colors py-2 text-left">Dashboard</button>
                     <Button 
                       onClick={handleSignOut}
                       className="bg-red-600 hover:bg-red-700 text-white font-medium w-full mt-4"
