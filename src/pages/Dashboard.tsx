@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, Filter } from 'lucide-react';
@@ -52,9 +51,8 @@ const Dashboard = () => {
             
             <div className="flex items-center space-x-4">
               <Button
-                variant="outline"
                 size="sm"
-                className="border-white/20 text-white hover:bg-white/10"
+                className="bg-white/10 border border-white/30 text-white hover:bg-white/20 hover:border-white/50"
               >
                 <Search className="h-4 w-4 mr-2" />
                 Search
@@ -90,31 +88,27 @@ const Dashboard = () => {
         {/* Filters */}
         <div className="flex items-center space-x-4 mb-8">
           <Button
-            variant="outline"
             size="sm"
-            className="border-white/20 text-white hover:bg-white/10"
+            className="bg-white/10 border border-white/30 text-white hover:bg-white/20"
           >
             <Filter className="h-4 w-4 mr-2" />
             All Memories
           </Button>
           <Button
-            variant="ghost"
             size="sm"
-            className="text-gray-400 hover:text-white"
+            className="bg-transparent text-gray-400 hover:text-white hover:bg-white/10"
           >
             Recent
           </Button>
           <Button
-            variant="ghost"
             size="sm"
-            className="text-gray-400 hover:text-white"
+            className="bg-transparent text-gray-400 hover:text-white hover:bg-white/10"
           >
             People
           </Button>
           <Button
-            variant="ghost"
             size="sm"
-            className="text-gray-400 hover:text-white"
+            className="bg-transparent text-gray-400 hover:text-white hover:bg-white/10"
           >
             Tech
           </Button>

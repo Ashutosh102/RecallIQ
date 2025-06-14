@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { User, Search, Plus } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -40,19 +40,18 @@ const Navbar = () => {
           {/* Mobile menu button */}
           <div className="md:hidden">
             <Button
-              variant="ghost"
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/20"
               size="sm"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white"
             >
-              <User className="h-5 w-5" />
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-white/10">
+          <div className="md:hidden py-4 border-t border-white/10 bg-dark-bg/95 backdrop-blur-lg">
             <div className="flex flex-col space-y-3">
               <a href="#features" className="text-gray-300 hover:text-white transition-colors py-2">Features</a>
               <a href="#pricing" className="text-gray-300 hover:text-white transition-colors py-2">Pricing</a>

@@ -8,25 +8,29 @@ const Features = () => {
       icon: <Plus className="h-6 w-6 text-white" />,
       title: "Add Memories Easily",
       description: "Quickly capture people, conversations, and moments with our intuitive interface. Upload images, add context, and tag important details.",
-      gradient: "bg-gradient-purple"
+      gradient: "bg-gradient-purple",
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
     },
     {
       icon: <Search className="h-6 w-6 text-white" />,
       title: "Smart Search",
       description: "Find anyone or anything with natural language queries. Ask 'Who was the React developer from the conference?' and get instant results.",
-      gradient: "bg-gradient-teal"
+      gradient: "bg-gradient-teal",
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
     },
     {
       icon: <Circle className="h-6 w-6 text-white" />,
       title: "AI-Powered Insights",
       description: "Our advanced AI analyzes your memories to provide intelligent summaries, connections, and reminders about important people and events.",
-      gradient: "bg-gradient-to-r from-blue-neon to-purple-primary"
+      gradient: "bg-gradient-to-r from-blue-neon to-purple-primary",
+      image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
     },
     {
       icon: <User className="h-6 w-6 text-white" />,
       title: "Organized and Secure",
       description: "Your memories are encrypted and organized automatically. Access them from anywhere while keeping your personal information completely private.",
-      gradient: "bg-gradient-to-r from-teal-accent to-blue-neon"
+      gradient: "bg-gradient-to-r from-teal-accent to-blue-neon",
+      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
     }
   ];
 

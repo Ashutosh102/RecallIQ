@@ -17,6 +17,15 @@ const Hero = () => {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-primary/20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-accent/20 rounded-full blur-3xl"></div>
       
+      {/* Hero Image */}
+      <div className="absolute right-10 top-1/4 hidden lg:block opacity-20">
+        <img 
+          src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+          alt="AI Memory Assistant" 
+          className="w-96 h-96 object-cover rounded-2xl"
+        />
+      </div>
+      
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="animate-fade-in">
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-poppins font-bold mb-6 leading-tight">
@@ -40,8 +49,7 @@ const Hero = () => {
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
-              className="border-white/20 text-white hover:bg-white/10 font-semibold px-8 py-4 text-lg rounded-xl backdrop-blur-sm"
+              className="bg-white/10 border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 font-semibold px-8 py-4 text-lg rounded-xl backdrop-blur-sm transition-all duration-300"
             >
               Watch Demo
             </Button>
