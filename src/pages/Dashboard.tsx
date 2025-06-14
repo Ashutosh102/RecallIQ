@@ -1,35 +1,44 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, Filter } from 'lucide-react';
 import MemoryCard from '@/components/MemoryCard';
 import AIInsights from '@/components/AIInsights';
+
 const Dashboard = () => {
-  const [memories, setMemories] = useState([{
-    id: '1',
-    title: 'React Conference 2024',
-    summary: 'Met John, a React developer from Hyderabad. He mentioned working on micro-frontends and shared insights about state management patterns.',
-    people: ['John'],
-    tags: ['tech', 'react', 'conference'],
-    date: '2024-06-10'
-  }, {
-    id: '2',
-    title: 'Coffee Meeting with Sarah',
-    summary: 'Had a great discussion about UX design principles. Sarah is working at a fintech startup and shared her experience with user research.',
-    people: ['Sarah'],
-    tags: ['UX', 'design', 'fintech'],
-    date: '2024-06-08'
-  }, {
-    id: '3',
-    title: 'Tech Meetup - AI Discussion',
-    summary: 'Interesting conversation about AI ethics with multiple attendees. Key points discussed: bias in algorithms, responsible AI development.',
-    people: ['Mike', 'Lisa', 'David'],
-    tags: ['AI', 'ethics', 'meetup'],
-    date: '2024-06-05'
-  }]);
+  const [memories, setMemories] = useState([
+    {
+      id: '1',
+      title: 'React Conference 2024',
+      summary: 'Met John, a React developer from Hyderabad. He mentioned working on micro-frontends and shared insights about state management patterns.',
+      people: ['John'],
+      tags: ['tech', 'react', 'conference'],
+      date: '2024-06-10'
+    },
+    {
+      id: '2',
+      title: 'Coffee Meeting with Sarah',
+      summary: 'Had a great discussion about UX design principles. Sarah is working at a fintech startup and shared her experience with user research.',
+      people: ['Sarah'],
+      tags: ['UX', 'design', 'fintech'],
+      date: '2024-06-08'
+    },
+    {
+      id: '3',
+      title: 'Tech Meetup - AI Discussion',
+      summary: 'Interesting conversation about AI ethics with multiple attendees. Key points discussed: bias in algorithms, responsible AI development.',
+      people: ['Mike', 'Lisa', 'David'],
+      tags: ['AI', 'ethics', 'meetup'],
+      date: '2024-06-05'
+    }
+  ]);
+
   const handleDeleteMemory = (id: string) => {
     setMemories(memories.filter(memory => memory.id !== id));
   };
-  return <div className="min-h-screen bg-gradient-dark">
+
+  return (
+    <div className="min-h-screen bg-gradient-dark">
       {/* Header */}
       <div className="bg-dark-bg/80 backdrop-blur-lg border-b border-white/10 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -42,11 +51,18 @@ const Dashboard = () => {
             </div>
             
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-white/20 text-white hover:bg-white/10"
+              >
                 <Search className="h-4 w-4 mr-2" />
                 Search
               </Button>
-              <Button size="sm" className="bg-gradient-purple hover:opacity-90 text-white">
+              <Button
+                size="sm"
+                className="bg-gradient-purple hover:opacity-90 text-white"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Memory
               </Button>
@@ -73,32 +89,53 @@ const Dashboard = () => {
 
         {/* Filters */}
         <div className="flex items-center space-x-4 mb-8">
-          <Button variant="outline" size="sm" className="border-white/20 text-white bg-white/[0.28]">
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-white/20 text-white hover:bg-white/10"
+          >
             <Filter className="h-4 w-4 mr-2" />
             All Memories
           </Button>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-white"
+          >
             Recent
           </Button>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-white"
+          >
             People
           </Button>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-white"
+          >
             Tech
           </Button>
         </div>
 
         {/* Memory Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {memories.map((memory, index) => <div key={memory.id} className="animate-fade-in" style={{
-          animationDelay: `${index * 0.1}s`
-        }}>
+          {memories.map((memory, index) => (
+            <div
+              key={memory.id}
+              className="animate-fade-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
               <MemoryCard {...memory} onDelete={handleDeleteMemory} />
-            </div>)}
+            </div>
+          ))}
         </div>
 
         {/* Empty State */}
-        {memories.length === 0 && <div className="text-center py-16">
+        {memories.length === 0 && (
+          <div className="text-center py-16">
             <div className="w-16 h-16 bg-gradient-purple rounded-full flex items-center justify-center mx-auto mb-4">
               <Plus className="h-8 w-8 text-white" />
             </div>
@@ -107,13 +144,19 @@ const Dashboard = () => {
             <Button className="bg-gradient-purple hover:opacity-90 text-white">
               Add Your First Memory
             </Button>
-          </div>}
+          </div>
+        )}
       </div>
 
       {/* Floating Action Button (Mobile) */}
-      <Button size="lg" className="fixed bottom-6 right-6 md:hidden bg-gradient-purple hover:opacity-90 text-white rounded-full w-14 h-14 shadow-2xl animate-glow">
+      <Button
+        size="lg"
+        className="fixed bottom-6 right-6 md:hidden bg-gradient-purple hover:opacity-90 text-white rounded-full w-14 h-14 shadow-2xl animate-glow"
+      >
         <Plus className="h-6 w-6" />
       </Button>
-    </div>;
+    </div>
+  );
 };
+
 export default Dashboard;
