@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, Filter } from 'lucide-react';
 import MemoryCard from '@/components/MemoryCard';
+import AIInsights from '@/components/AIInsights';
 
 const Dashboard = () => {
   const [memories, setMemories] = useState([
@@ -79,6 +80,11 @@ const Dashboard = () => {
           <p className="text-gray-300">
             {memories.length} memories stored • Never forget important connections again
           </p>
+        </div>
+
+        {/* AI Insights Section */}
+        <div className="mb-8">
+          <AIInsights memories={memories} />
         </div>
 
         {/* Filters */}
