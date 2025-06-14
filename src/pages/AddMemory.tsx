@@ -1,5 +1,5 @@
-
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,6 +7,7 @@ import { ArrowLeft, Upload, User, Calendar, Brain, Sparkles } from 'lucide-react
 import { aiService, AIMemoryResponse } from '@/lib/ai';
 
 const AddMemory = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -51,6 +52,10 @@ const AddMemory = () => {
     }
   };
 
+  const handleBackToDashboard = () => {
+    navigate('/dashboard');
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const memoryData = {
@@ -60,7 +65,7 @@ const AddMemory = () => {
       keyTopics: aiEnhancement?.keyTopics
     };
     console.log('Memory submitted:', memoryData);
-    // Here you would typically save to your database
+    navigate('/dashboard');
   };
 
   return (
@@ -72,6 +77,7 @@ const AddMemory = () => {
             <Button
               variant="ghost"
               size="sm"
+              onClick={handleBackToDashboard}
               className="text-gray-400 hover:text-white"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />

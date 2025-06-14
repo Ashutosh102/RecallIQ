@@ -10,6 +10,22 @@ const Hero = () => {
     navigate('/dashboard');
   };
 
+  const handleWatchDemo = () => {
+    // Scroll to features section
+    const featuresSection = document.getElementById('features');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleScrollDown = () => {
+    // Scroll to features section
+    const featuresSection = document.getElementById('features');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
       {/* Background Effects */}
@@ -49,14 +65,17 @@ const Hero = () => {
             </Button>
             <Button 
               size="lg" 
-              className="bg-white/10 border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 font-semibold px-8 py-4 text-lg rounded-xl backdrop-blur-sm transition-all duration-300"
+              onClick={handleWatchDemo}
+              className="bg-white/20 border-2 border-white/40 text-white hover:bg-white/30 hover:border-white/60 font-semibold px-8 py-4 text-lg rounded-xl backdrop-blur-sm transition-all duration-300"
             >
               Watch Demo
             </Button>
           </div>
           
           <div className="flex justify-center">
-            <ArrowDown className="h-6 w-6 text-gray-400 animate-bounce" />
+            <button onClick={handleScrollDown} className="cursor-pointer">
+              <ArrowDown className="h-6 w-6 text-gray-400 animate-bounce hover:text-white transition-colors" />
+            </button>
           </div>
         </div>
       </div>

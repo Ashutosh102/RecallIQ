@@ -1,5 +1,5 @@
-
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, ArrowLeft, Brain, Lightbulb } from 'lucide-react';
@@ -7,6 +7,7 @@ import MemoryCard from '@/components/MemoryCard';
 import { aiService, AISearchResponse } from '@/lib/ai';
 
 const SearchMemory = () => {
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [aiResponse, setAiResponse] = useState<AISearchResponse | null>(null);
@@ -27,6 +28,10 @@ const SearchMemory = () => {
     "Find conversations about AI ethics",
     "Show me all tech meetup memories"
   ];
+
+  const handleBackToDashboard = () => {
+    navigate('/dashboard');
+  };
 
   const handleSearch = async (searchQuery: string) => {
     setIsSearching(true);
@@ -59,6 +64,7 @@ const SearchMemory = () => {
             <Button
               variant="ghost"
               size="sm"
+              onClick={handleBackToDashboard}
               className="text-gray-400 hover:text-white"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
