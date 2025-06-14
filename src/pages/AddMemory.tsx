@@ -1,19 +1,24 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Upload, User, Calendar, Brain, Sparkles } from 'lucide-react';
+import { ArrowLeft, User, Calendar, Brain, Sparkles } from 'lucide-react';
 import { aiService, AIMemoryResponse } from '@/lib/ai';
 import { useMemories } from '@/hooks/useMemories';
+import { useMemoryAttachments } from '@/hooks/useMemoryAttachments';
 import { useToast } from '@/components/ui/use-toast';
+import FileUpload from '@/components/FileUpload';
+import AudioRecorder from '@/components/AudioRecorder';
+import { UploadedFile } from '@/hooks/useFileUpload';
 
 const AddMemory = () => {
   const navigate = useNavigate();
   const { addMemory } = useMemories();
+  const { addAttachment } = useMemoryAttachments();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -28,6 +33,22 @@ const AddMemory = () => {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFilesUploaded = (files: UploadedFile[]) => {
+    setUploadedFiles(prev => [...prev, ...files]);
+  };
+
+  const handleFileRemove = (fileId: string) => {
+    setUploadedFiles(prev => prev.filter(file => file.id !== fileId));
+  };
+
+  const handleAudioUploaded = (file: UploadedFile) => {
+    setUploadedFiles(prev => [...prev, file]);
+    toast({
+      title: "Audio recorded successfully!",
+      description: "Your audio recording has been uploaded.",
+    });
   };
 
   const handleAiEnhance = async () => {
@@ -52,7 +73,7 @@ const AddMemory = () => {
     if (aiEnhancement) {
       setFormData(prev => ({
         ...prev,
-        title: aiEnhancement.summary.substring(0, 100), // Use AI summary as title if no title
+        title: aiEnhancement.summary.substring(0, 100),
         tags: aiEnhancement.enhancedTags.join(', ')
       }));
       setShowAiSuggestions(false);
@@ -94,11 +115,19 @@ const AddMemory = () => {
         } : {}
       };
 
-      await addMemory(memoryData);
+      const savedMemory = await addMemory(memoryData);
+      
+      // Upload attachments if any
+      if (uploadedFiles.length > 0 && savedMemory) {
+        const attachmentPromises = uploadedFiles.map(file => 
+          addAttachment(savedMemory.id, file)
+        );
+        await Promise.all(attachmentPromises);
+      }
       
       toast({
         title: "Memory saved successfully!",
-        description: "Your memory has been added to your personal database.",
+        description: `Your memory${uploadedFiles.length > 0 ? ' and attachments have' : ' has'} been added to your personal database.`,
       });
       
       navigate('/dashboard');
@@ -261,16 +290,24 @@ const AddMemory = () => {
             </div>
           )}
 
+          {/* Audio Recording */}
+          <div className="glass-card p-6">
+            <label className="block text-lg font-semibold text-white mb-4">
+              Voice Recording
+            </label>
+            <AudioRecorder onAudioUploaded={handleAudioUploaded} />
+          </div>
+
           {/* File Upload */}
           <div className="glass-card p-6">
             <label className="block text-lg font-semibold text-white mb-4">
               Add Files (Optional)
             </label>
-            <div className="border-2 border-dashed border-white/20 rounded-lg p-8 text-center hover:border-purple-primary/50 transition-colors cursor-pointer">
-              <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-              <p className="text-gray-300 mb-2">Upload images, audio, or screenshots</p>
-              <p className="text-sm text-gray-500">Drag & drop or click to browse (Coming soon)</p>
-            </div>
+            <FileUpload 
+              onFilesUploaded={handleFilesUploaded}
+              uploadedFiles={uploadedFiles}
+              onFileRemove={handleFileRemove}
+            />
           </div>
 
           {/* Additional Details */}
