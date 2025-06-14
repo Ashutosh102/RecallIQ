@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { User, Settings, LogOut, Camera, Mail, Palette, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,6 +12,12 @@ interface ProfilePopupProps {
   anchorRef: React.RefObject<HTMLElement>;
 }
 
+interface UserPreferences {
+  theme: string;
+  notifications: boolean;
+  privacy: string;
+}
+
 const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef }) => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
@@ -24,7 +29,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
     avatar_url: '',
     email: ''
   });
-  const [preferences, setPreferences] = useState({
+  const [preferences, setPreferences] = useState<UserPreferences>({
     theme: 'dark',
     notifications: true,
     privacy: 'public'
@@ -74,13 +79,22 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
           avatar_url: data.avatar_url || '',
           email: user?.email || ''
         });
-        setPreferences(data.preferences || {
+        
+        // Safely parse preferences with proper typing
+        const userPreferences = data.preferences as UserPreferences | null;
+        setPreferences(userPreferences || {
           theme: 'dark',
           notifications: true,
           privacy: 'public'
         });
       } else {
         // Create profile if it doesn't exist
+        const defaultPreferences: UserPreferences = {
+          theme: 'dark',
+          notifications: true,
+          privacy: 'public'
+        };
+
         const { data: newProfile, error: insertError } = await supabase
           .from('profiles')
           .insert([
@@ -89,11 +103,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
               first_name: '',
               last_name: '',
               avatar_url: '',
-              preferences: {
-                theme: 'dark',
-                notifications: true,
-                privacy: 'public'
-              }
+              preferences: defaultPreferences
             }
           ])
           .select()
@@ -101,6 +111,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
 
         if (insertError) throw insertError;
         setProfile(newProfile);
+        setPreferences(defaultPreferences);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
