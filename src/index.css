@@ -124,10 +124,18 @@
   }
 
   .glass-input:focus {
-    @apply bg-white/10 border-purple-primary/50;
+    @apply bg-white/10 border-purple-primary/50 outline-none;
     box-shadow: 
       0 8px 32px 0 rgba(139, 92, 246, 0.3),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-input option {
+    @apply bg-dark-bg text-white;
+  }
+
+  .glass-input select {
+    @apply bg-transparent;
   }
 }
 
@@ -187,16 +195,44 @@
   }
 }
 
+@keyframes popupSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes profileGlow {
+  0%, 100% {
+    box-shadow: 
+      0 0 10px rgba(139, 92, 246, 0.2),
+      0 0 20px rgba(139, 92, 246, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px rgba(139, 92, 246, 0.4),
+      0 0 30px rgba(139, 92, 246, 0.2);
+  }
+}
+
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
 
 .animate-slide-in-bottom {
-  animation: slideInFromBottom 0.6s ease-out;
+  animation: slideInFromBottom 0.6s ease-out, popupSlideIn 0.4s ease-out;
 }
 
 .animate-slide-in-left {
   animation: slideInFromLeft 0.6s ease-out;
+}
+
+.animate-profile-glow {
+  animation: profileGlow 2s ease-in-out infinite;
 }
 
 .shimmer-effect {
