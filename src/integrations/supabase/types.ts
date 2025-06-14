@@ -93,30 +93,42 @@ export type Database = {
       memory_attachments: {
         Row: {
           created_at: string | null
+          extracted_text: string | null
           file_name: string
           file_size: number | null
           file_type: string
           file_url: string
           id: string
           memory_id: string
+          processed_at: string | null
+          processing_status: string | null
+          transcription: string | null
         }
         Insert: {
           created_at?: string | null
+          extracted_text?: string | null
           file_name: string
           file_size?: number | null
           file_type: string
           file_url: string
           id?: string
           memory_id: string
+          processed_at?: string | null
+          processing_status?: string | null
+          transcription?: string | null
         }
         Update: {
           created_at?: string | null
+          extracted_text?: string | null
           file_name?: string
           file_size?: number | null
           file_type?: string
           file_url?: string
           id?: string
           memory_id?: string
+          processed_at?: string | null
+          processing_status?: string | null
+          transcription?: string | null
         }
         Relationships: [
           {

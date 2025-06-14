@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
+import { aiService } from '@/lib/ai';
 
 export interface MemoryAttachment {
   id: string;
@@ -12,6 +13,10 @@ export interface MemoryAttachment {
   file_type: string;
   file_size: number;
   created_at: string;
+  extracted_text?: string;
+  transcription?: string;
+  processing_status?: string;
+  processed_at?: string;
 }
 
 export const useMemoryAttachments = () => {
@@ -37,7 +42,8 @@ export const useMemoryAttachments = () => {
           file_name: file.name,
           file_url: file.url,
           file_type: file.type,
-          file_size: file.size
+          file_size: file.size,
+          processing_status: 'pending'
         })
         .select()
         .single();
@@ -45,6 +51,10 @@ export const useMemoryAttachments = () => {
       if (error) throw error;
       
       setAttachments(prev => [...prev, data]);
+
+      // Process file content in background
+      processFileContent(data);
+      
       return data;
     } catch (error: any) {
       toast({
@@ -53,6 +63,28 @@ export const useMemoryAttachments = () => {
         variant: "destructive",
       });
       throw error;
+    }
+  };
+
+  const processFileContent = async (attachment: MemoryAttachment) => {
+    try {
+      if (attachment.file_type.startsWith('image/')) {
+        // Process OCR for images
+        await aiService.processImageOCR(attachment.id, attachment.file_url);
+      } else if (attachment.file_type.startsWith('audio/')) {
+        // Process transcription for audio
+        await aiService.processAudioTranscription(attachment.id, attachment.file_url);
+      }
+      
+      // Refresh attachments to get updated processing status
+      fetchAttachments(attachment.memory_id);
+    } catch (error) {
+      console.error('File processing failed:', error);
+      toast({
+        title: "File processing failed",
+        description: "Content extraction from this file failed, but the file is still attached.",
+        variant: "destructive",
+      });
     }
   };
 

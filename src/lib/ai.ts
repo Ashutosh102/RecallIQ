@@ -17,7 +17,7 @@ export interface AISearchResponse {
 
 // Real AI service using Groq + LLaMA 3 via Supabase Edge Functions
 export const aiService = {
-  async enhanceMemory(description: string, people: string[], existingTags: string[]): Promise<AIMemoryResponse> {
+  async enhanceMemory(description: string, people: string[], existingTags: string[], memoryId?: string): Promise<AIMemoryResponse> {
     console.log('Calling AI enhancement for description:', description.substring(0, 50));
     
     try {
@@ -25,7 +25,8 @@ export const aiService = {
         body: {
           description,
           people,
-          existingTags
+          existingTags,
+          memoryId
         }
       });
 
@@ -56,10 +57,31 @@ export const aiService = {
     console.log('Calling AI search for query:', query);
     
     try {
+      // Enhance memories with attachment content for search
+      const memoriesWithAttachments = await Promise.all(
+        memories.map(async (memory) => {
+          try {
+            const { data: attachments } = await supabase
+              .from('memory_attachments')
+              .select('extracted_text, transcription, file_name')
+              .eq('memory_id', memory.id)
+              .eq('processing_status', 'completed');
+            
+            return {
+              ...memory,
+              attachments: attachments || []
+            };
+          } catch (error) {
+            console.error('Failed to fetch attachments for memory:', memory.id, error);
+            return memory;
+          }
+        })
+      );
+
       const { data, error } = await supabase.functions.invoke('ai-search-memories', {
         body: {
           query,
-          memories
+          memories: memoriesWithAttachments
         }
       });
 
@@ -118,6 +140,55 @@ export const aiService = {
         'Most of your networking happens in professional settings',
         'Add more context to your memories for better AI insights'
       ];
+    }
+  },
+
+  // New functions for file processing
+  async processImageOCR(attachmentId: string, imageUrl: string): Promise<string | null> {
+    console.log('Processing OCR for attachment:', attachmentId);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('process-image-ocr', {
+        body: {
+          attachmentId,
+          imageUrl
+        }
+      });
+
+      if (error) {
+        console.error('OCR processing error:', error);
+        throw error;
+      }
+
+      console.log('OCR processing successful:', data);
+      return data.extractedText;
+    } catch (error) {
+      console.error('Failed to process OCR:', error);
+      return null;
+    }
+  },
+
+  async processAudioTranscription(attachmentId: string, audioUrl: string): Promise<string | null> {
+    console.log('Processing transcription for attachment:', attachmentId);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('process-audio-transcription', {
+        body: {
+          attachmentId,
+          audioUrl
+        }
+      });
+
+      if (error) {
+        console.error('Transcription processing error:', error);
+        throw error;
+      }
+
+      console.log('Transcription processing successful:', data);
+      return data.transcription;
+    } catch (error) {
+      console.error('Failed to process transcription:', error);
+      return null;
     }
   }
 };

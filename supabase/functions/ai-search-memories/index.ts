@@ -23,33 +23,43 @@ serve(async (req) => {
 
     console.log('Processing AI search for query:', query);
 
-    // Create a simplified representation of memories for the AI
-    const memoryContext = memories.map((memory: any) => ({
+    // Create enhanced memory summaries that include file content
+    const enhancedMemories = memories.map((memory: any) => ({
       id: memory.id,
       title: memory.title,
       summary: memory.summary,
       people: memory.people || [],
-      tags: memory.tags || []
+      tags: memory.tags || [],
+      date: memory.date,
+      // Include file content if available
+      fileContent: memory.attachments?.map((att: any) => {
+        const content = [];
+        if (att.extracted_text) content.push(`Text: ${att.extracted_text}`);
+        if (att.transcription) content.push(`Audio: ${att.transcription}`);
+        return content.join(' | ');
+      }).filter((content: string) => content.length > 0).join(' || ') || ''
     }));
 
-    const prompt = `You are an intelligent search assistant. Analyze the user query and find the most relevant memories. Respond ONLY with valid JSON in this exact format:
+    const prompt = `You are an intelligent memory search assistant. Analyze the user's search query and find the most relevant memories. Respond ONLY with valid JSON in this exact format:
 
 {
   "relevantMemories": ["memory_id1", "memory_id2"],
-  "interpretation": "Your interpretation of what the user is looking for",
-  "suggestedQueries": ["suggested search 1", "suggested search 2", "suggested search 3"]
+  "interpretation": "Brief explanation of what the user is looking for",
+  "suggestedQueries": ["suggestion1", "suggestion2", "suggestion3"]
 }
 
-User Query: "${query}"
+Search Query: "${query}"
 
 Available Memories:
-${JSON.stringify(memoryContext, null, 2)}
+${JSON.stringify(enhancedMemories, null, 2)}
 
 Instructions:
-- Return IDs of memories that best match the query
-- Provide a clear interpretation of the search intent
-- Suggest 3 related follow-up searches
-- Consider semantic meaning, not just exact word matches`;
+- Find memories that match the query in title, summary, people, tags, OR file content (extracted text from images or audio transcriptions)
+- Consider semantic similarity, not just exact matches
+- Return memory IDs of the most relevant results (maximum 10)
+- Provide helpful interpretation of the search intent
+- Suggest 3 related follow-up queries that might be useful
+- Include memories that have relevant file content even if the main description doesn't match`;
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -67,7 +77,7 @@ Instructions:
           { role: 'user', content: prompt }
         ],
         temperature: 0.2,
-        max_tokens: 1000,
+        max_tokens: 800,
       }),
     });
 
@@ -99,11 +109,11 @@ Instructions:
       
       parsedResponse = {
         relevantMemories: basicResults.map((m: any) => m.id),
-        interpretation: `Search for "${query}" using basic text matching`,
+        interpretation: `Basic text search for "${query}" - AI search temporarily unavailable`,
         suggestedQueries: [
-          'Show me recent memories',
-          'Find all people I met',
-          'Search by location or event'
+          'Show me recent connections',
+          'Find people by profession',
+          'Search by event or location'
         ]
       };
     }
@@ -116,11 +126,16 @@ Instructions:
 
   } catch (error) {
     console.error('Error in ai-search-memories function:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message,
-      relevantMemories: [],
-      interpretation: 'Search temporarily unavailable',
-      suggestedQueries: ['Try again later']
+    // Fallback to basic search
+    const basicResults = memories.filter((memory: any) => 
+      memory.title.toLowerCase().includes(query.toLowerCase()) ||
+      memory.summary.toLowerCase().includes(query.toLowerCase())
+    );
+    
+    return new Response(JSON.stringify({
+      relevantMemories: basicResults.map((m: any) => m.id),
+      interpretation: `Search temporarily unavailable - showing basic results for "${query}"`,
+      suggestedQueries: ['Try again later', 'Use simpler search terms']
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

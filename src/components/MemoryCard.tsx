@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { User, Calendar, Trash2, Paperclip, Image, Music, Video, FileText, ExternalLink } from 'lucide-react';
+import { User, Calendar, Trash2, Paperclip, Image, Music, Video, FileText, ExternalLink, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { useMemoryAttachments, MemoryAttachment } from '@/hooks/useMemoryAttachments';
 
 interface MemoryCardProps {
@@ -36,6 +36,19 @@ const MemoryCard = ({ id, title, summary, people = [], tags = [], date, onDelete
     if (type.startsWith('audio/')) return <Music className="h-3 w-3" />;
     if (type.startsWith('video/')) return <Video className="h-3 w-3" />;
     return <FileText className="h-3 w-3" />;
+  };
+
+  const getProcessingIcon = (status?: string) => {
+    switch (status) {
+      case 'completed':
+        return <CheckCircle className="h-3 w-3 text-green-400" />;
+      case 'failed':
+        return <XCircle className="h-3 w-3 text-red-400" />;
+      case 'pending':
+        return <Clock className="h-3 w-3 text-yellow-400 animate-spin" />;
+      default:
+        return null;
+    }
   };
 
   const handleAttachmentClick = (url: string) => {
@@ -94,11 +107,27 @@ const MemoryCard = ({ id, title, summary, people = [], tags = [], date, onDelete
                 <div className="flex items-center space-x-2">
                   {getFileIcon(attachment.file_type)}
                   <span className="truncate max-w-32">{attachment.file_name}</span>
+                  {getProcessingIcon(attachment.processing_status)}
                 </div>
                 <ExternalLink className="h-3 w-3" />
               </div>
             ))}
           </div>
+          
+          {/* Show processing status summary */}
+          {attachments.some(att => att.processing_status === 'pending') && (
+            <div className="mt-2 text-xs text-yellow-400 flex items-center">
+              <Clock className="h-3 w-3 mr-1 animate-spin" />
+              Processing file content...
+            </div>
+          )}
+          
+          {/* Show content summary if available */}
+          {attachments.some(att => att.extracted_text || att.transcription) && (
+            <div className="mt-2 text-xs text-green-400">
+              ✓ Content extracted and searchable
+            </div>
+          )}
         </div>
       )}
       
