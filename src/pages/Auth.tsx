@@ -5,18 +5,21 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import AuthBackground from '@/components/auth/AuthBackground';
 import AuthCard from '@/components/auth/AuthCard';
+import EmailConfirmation from '@/components/auth/EmailConfirmation';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp, user } = useAuth();
+  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState('');
+  const { signIn, signUp, user, session } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
+    if (user && session) {
       navigate('/dashboard');
     }
-  }, [user, navigate]);
+  }, [user, session, navigate]);
 
   const handleSignIn = async (e: React.FormEvent, data: { email: string; password: string }) => {
     e.preventDefault();
@@ -26,11 +29,21 @@ const Auth = () => {
       const { error } = await signIn(data.email, data.password);
       
       if (error) {
-        toast({
-          title: "Sign in failed",
-          description: error.message,
-          variant: "destructive",
-        });
+        if (error.message.includes('Email not confirmed')) {
+          setPendingEmail(data.email);
+          setShowEmailConfirmation(true);
+          toast({
+            title: "Email not confirmed",
+            description: "Please check your email and click the confirmation link.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Sign in failed",
+            description: error.message,
+            variant: "destructive",
+          });
+        }
       } else {
         toast({
           title: "Welcome back!",
@@ -62,6 +75,8 @@ const Auth = () => {
           variant: "destructive",
         });
       } else {
+        setPendingEmail(data.email);
+        setShowEmailConfirmation(true);
         toast({
           title: "Account created!",
           description: "Please check your email to verify your account.",
@@ -78,14 +93,26 @@ const Auth = () => {
     }
   };
 
+  const handleBackToAuth = () => {
+    setShowEmailConfirmation(false);
+    setPendingEmail('');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-dark flex items-center justify-center p-4 relative overflow-hidden">
       <AuthBackground />
-      <AuthCard 
-        onSignIn={handleSignIn}
-        onSignUp={handleSignUp}
-        isLoading={isLoading}
-      />
+      {showEmailConfirmation ? (
+        <EmailConfirmation 
+          email={pendingEmail}
+          onBack={handleBackToAuth}
+        />
+      ) : (
+        <AuthCard 
+          onSignIn={handleSignIn}
+          onSignUp={handleSignUp}
+          isLoading={isLoading}
+        />
+      )}
     </div>
   );
 };
