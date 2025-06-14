@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -5,22 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Search, ArrowLeft, Brain, Lightbulb } from 'lucide-react';
 import MemoryCard from '@/components/MemoryCard';
 import { aiService, AISearchResponse } from '@/lib/ai';
+import { useMemories } from '@/hooks/useMemories';
 
 const SearchMemory = () => {
   const navigate = useNavigate();
+  const { memories } = useMemories();
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [aiResponse, setAiResponse] = useState<AISearchResponse | null>(null);
-  const [searchResults, setSearchResults] = useState([
-    {
-      id: '1',
-      title: 'React Conference 2024',
-      summary: 'Met John, a React developer from Hyderabad. He mentioned working on micro-frontends and shared insights about state management patterns.',
-      people: ['John'],
-      tags: ['tech', 'react', 'conference'],
-      date: '2024-06-10'
-    }
-  ]);
+  const [searchResults, setSearchResults] = useState(memories);
 
   const exampleQueries = [
     "Who was the React guy from Hyderabad?",
@@ -38,18 +32,30 @@ const SearchMemory = () => {
     setQuery(searchQuery);
     
     try {
-      // AI-powered search interpretation
-      const aiSearchResult = await aiService.searchMemories(searchQuery, searchResults);
-      setAiResponse(aiSearchResult);
-      
-      // Filter results based on AI interpretation
-      // In a real app, this would be more sophisticated
-      const filteredResults = searchResults.filter(memory => 
-        aiSearchResult.relevantMemories.includes(memory.id)
-      );
-      setSearchResults(filteredResults);
+      // If AI service is available, use it for enhanced search
+      try {
+        const aiSearchResult = await aiService.searchMemories(searchQuery, memories);
+        setAiResponse(aiSearchResult);
+        
+        // Filter results based on AI interpretation
+        const filteredResults = memories.filter(memory => 
+          aiSearchResult.relevantMemories.includes(memory.id)
+        );
+        setSearchResults(filteredResults);
+      } catch (aiError) {
+        console.log('AI search not available, falling back to basic search');
+        // Fallback to basic text search
+        const basicResults = memories.filter(memory => 
+          memory.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          memory.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          memory.people?.some(person => person.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          memory.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
+        setSearchResults(basicResults);
+      }
     } catch (error) {
       console.error('Search failed:', error);
+      setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
@@ -151,7 +157,7 @@ const SearchMemory = () => {
         )}
 
         {/* Example Queries */}
-        {!query && !isSearching && searchResults.length === 1 && (
+        {!query && !isSearching && memories.length > 0 && (
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-white mb-4">Try these example searches:</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -168,8 +174,23 @@ const SearchMemory = () => {
           </div>
         )}
 
+        {/* No memories message */}
+        {memories.length === 0 && (
+          <div className="glass-card p-8 text-center">
+            <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-white mb-2">No memories to search</h3>
+            <p className="text-gray-300 mb-6">Add some memories first to start searching through them.</p>
+            <Button 
+              onClick={() => navigate('/add-memory')}
+              className="bg-gradient-purple hover:opacity-90 text-white"
+            >
+              Add Your First Memory
+            </Button>
+          </div>
+        )}
+
         {/* Search Results */}
-        {query && (
+        {query && memories.length > 0 && (
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-white mb-4">
               {isSearching ? 'AI is analyzing your memories...' : `Results for "${query}"`}
@@ -200,7 +221,7 @@ const SearchMemory = () => {
               <div className="glass-card p-8 text-center">
                 <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-white mb-2">No results found</h3>
-                <p className="text-gray-300">AI couldn't find any memories matching your query. Try a different search or add more memories to your database.</p>
+                <p className="text-gray-300">No memories found matching your search. Try a different query or add more memories to your database.</p>
               </div>
             )}
           </div>

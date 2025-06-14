@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -5,9 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Upload, User, Calendar, Brain, Sparkles } from 'lucide-react';
 import { aiService, AIMemoryResponse } from '@/lib/ai';
+import { useMemories } from '@/hooks/useMemories';
+import { useToast } from '@/components/ui/use-toast';
 
 const AddMemory = () => {
   const navigate = useNavigate();
+  const { addMemory } = useMemories();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -46,6 +52,7 @@ const AddMemory = () => {
     if (aiEnhancement) {
       setFormData(prev => ({
         ...prev,
+        title: aiEnhancement.summary.substring(0, 100), // Use AI summary as title if no title
         tags: aiEnhancement.enhancedTags.join(', ')
       }));
       setShowAiSuggestions(false);
@@ -56,16 +63,55 @@ const AddMemory = () => {
     navigate('/dashboard');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const memoryData = {
-      ...formData,
-      aiSummary: aiEnhancement?.summary,
-      aiInsights: aiEnhancement?.insights,
-      keyTopics: aiEnhancement?.keyTopics
-    };
-    console.log('Memory submitted:', memoryData);
-    navigate('/dashboard');
+    
+    if (!formData.title.trim() || !formData.description.trim()) {
+      toast({
+        title: "Missing required fields",
+        description: "Please provide both a title and description for your memory.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const memoryData = {
+        title: formData.title.trim(),
+        summary: formData.description.trim(),
+        content: formData.description.trim(),
+        people: formData.people ? formData.people.split(',').map(p => p.trim()).filter(Boolean) : [],
+        tags: formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+        date: formData.date,
+        ai_enhanced: !!aiEnhancement,
+        ai_insights: aiEnhancement ? {
+          summary: aiEnhancement.summary,
+          insights: aiEnhancement.insights,
+          keyTopics: aiEnhancement.keyTopics,
+          enhancedTags: aiEnhancement.enhancedTags
+        } : {}
+      };
+
+      await addMemory(memoryData);
+      
+      toast({
+        title: "Memory saved successfully!",
+        description: "Your memory has been added to your personal database.",
+      });
+      
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Error saving memory:', error);
+      toast({
+        title: "Error saving memory",
+        description: "There was a problem saving your memory. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -105,11 +151,24 @@ const AddMemory = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Title Input */}
+          <div className="glass-card p-6">
+            <label className="block text-lg font-semibold text-white mb-4">
+              Memory Title *
+            </label>
+            <Input
+              placeholder="Give your memory a descriptive title..."
+              value={formData.title}
+              onChange={(e) => handleInputChange('title', e.target.value)}
+              className="bg-white/5 border-white/10 text-white placeholder-gray-400 text-lg focus:border-purple-primary/50 focus:ring-purple-primary/20"
+            />
+          </div>
+
           {/* Main Memory Input */}
           <div className="glass-card p-8">
             <div className="flex justify-between items-center mb-4">
               <label className="block text-lg font-semibold text-white">
-                What do you want to remember?
+                What do you want to remember? *
               </label>
               <Button
                 type="button"
@@ -210,7 +269,7 @@ const AddMemory = () => {
             <div className="border-2 border-dashed border-white/20 rounded-lg p-8 text-center hover:border-purple-primary/50 transition-colors cursor-pointer">
               <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
               <p className="text-gray-300 mb-2">Upload images, audio, or screenshots</p>
-              <p className="text-sm text-gray-500">Drag & drop or click to browse</p>
+              <p className="text-sm text-gray-500">Drag & drop or click to browse (Coming soon)</p>
             </div>
           </div>
 
@@ -260,9 +319,10 @@ const AddMemory = () => {
             <Button
               type="submit"
               size="lg"
+              disabled={isSubmitting}
               className="bg-gradient-purple hover:opacity-90 text-white font-semibold px-12 py-4 text-lg rounded-xl glow-effect animate-glow"
             >
-              Save Memory
+              {isSubmitting ? 'Saving Memory...' : 'Save Memory'}
             </Button>
           </div>
         </form>

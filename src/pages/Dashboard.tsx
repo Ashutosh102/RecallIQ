@@ -8,6 +8,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import MemoryCard from '@/components/MemoryCard';
 import AIInsights from '@/components/AIInsights';
 import ProfilePopup from '@/components/ProfilePopup';
+import { useMemories } from '@/hooks/useMemories';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -15,35 +16,12 @@ const Dashboard = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfilePopupOpen, setIsProfilePopupOpen] = useState(false);
   const profileIconRef = useRef<HTMLButtonElement>(null);
-  const [memories, setMemories] = useState([
-    {
-      id: '1',
-      title: 'React Conference 2024',
-      summary: 'Met John, a React developer from Hyderabad. He mentioned working on micro-frontends and shared insights about state management patterns.',
-      people: ['John'],
-      tags: ['tech', 'react', 'conference'],
-      date: '2024-06-10'
-    },
-    {
-      id: '2',
-      title: 'Coffee Meeting with Sarah',
-      summary: 'Had a great discussion about UX design principles. Sarah is working at a fintech startup and shared her experience with user research.',
-      people: ['Sarah'],
-      tags: ['UX', 'design', 'fintech'],
-      date: '2024-06-08'
-    },
-    {
-      id: '3',
-      title: 'Tech Meetup - AI Discussion',
-      summary: 'Interesting conversation about AI ethics with multiple attendees. Key points discussed: bias in algorithms, responsible AI development.',
-      people: ['Mike', 'Lisa', 'David'],
-      tags: ['AI', 'ethics', 'meetup'],
-      date: '2024-06-05'
-    }
-  ]);
+  
+  // Use real memories from database
+  const { memories, loading, deleteMemory } = useMemories();
 
   const handleDeleteMemory = (id: string) => {
-    setMemories(memories.filter(memory => memory.id !== id));
+    deleteMemory(id);
   };
 
   const handleAddMemory = () => {
@@ -65,6 +43,18 @@ const Dashboard = () => {
     }
     return 'U';
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-dark flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-2 border-purple-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-300">Loading your memories...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-dark">
