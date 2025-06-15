@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import AuthBackground from '@/components/auth/AuthBackground';
 import AuthCard from '@/components/auth/AuthCard';
 
@@ -63,8 +63,8 @@ const Auth = () => {
         });
       } else {
         toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account.",
+          title: "Account created successfully!",
+          description: "Welcome to RecallIQ. You can now start creating memories.",
         });
       }
     } catch (error) {

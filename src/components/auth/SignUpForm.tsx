@@ -7,10 +7,11 @@ import { Loader2, Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
 
 interface SignUpFormProps {
   onSubmit: (e: React.FormEvent, data: { email: string; password: string; firstName: string; lastName: string }) => void;
+  onOTPRequired: (email: string, formData: { email: string; password: string; firstName: string; lastName: string }) => void;
   isLoading: boolean;
 }
 
-const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
+const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, onOTPRequired, isLoading }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ 
     email: '', 
@@ -20,7 +21,9 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
   });
 
   const handleSubmit = (e: React.FormEvent) => {
-    onSubmit(e, formData);
+    e.preventDefault();
+    // Trigger OTP verification instead of direct signup
+    onOTPRequired(formData.email, formData);
   };
 
   return (
@@ -37,6 +40,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
             placeholder="First name"
             value={formData.firstName}
             onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+            required
             className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 backdrop-blur-sm focus:bg-white/15 focus:border-purple-primary/50 transition-all duration-300"
           />
         </div>
@@ -51,6 +55,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
             placeholder="Last name"
             value={formData.lastName}
             onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+            required
             className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 backdrop-blur-sm focus:bg-white/15 focus:border-purple-primary/50 transition-all duration-300"
           />
         </div>
@@ -85,6 +90,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
             value={formData.password}
             onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
             required
+            minLength={6}
             className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 backdrop-blur-sm focus:bg-white/15 focus:border-purple-primary/50 transition-all duration-300 pr-10"
           />
           <button
@@ -105,10 +111,10 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, isLoading }) => {
         {isLoading ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            Creating Account...
+            Processing...
           </>
         ) : (
-          'Create Account'
+          'Continue with Email Verification'
         )}
       </Button>
     </form>

@@ -42,6 +42,36 @@ export type Database = {
         }
         Relationships: []
       }
+      email_verification_otps: {
+        Row: {
+          attempts: number | null
+          created_at: string | null
+          email: string
+          expires_at: string
+          id: string
+          otp_code: string
+          verified: boolean | null
+        }
+        Insert: {
+          attempts?: number | null
+          created_at?: string | null
+          email: string
+          expires_at?: string
+          id?: string
+          otp_code: string
+          verified?: boolean | null
+        }
+        Update: {
+          attempts?: number | null
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          otp_code?: string
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
       memories: {
         Row: {
           ai_enhanced: boolean | null
@@ -175,7 +205,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_expired_otps: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      create_email_verification_otp: {
+        Args: { p_email: string }
+        Returns: string
+      }
+      generate_otp: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      verify_email_otp: {
+        Args: { p_email: string; p_otp: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
