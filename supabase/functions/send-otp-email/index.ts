@@ -47,9 +47,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     const resend = new Resend(resendApiKey);
 
-    // Send OTP via email using Resend's default domain
+    // Send OTP via email using your verified domain
     const emailResponse = await resend.emails.send({
-      from: "RecallIQ <onboarding@resend.dev>",
+      from: "RecallIQ <noreply@yourdomain.com>",
       to: [email],
       subject: "Your RecallIQ Verification Code",
       html: `
