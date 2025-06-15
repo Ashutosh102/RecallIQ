@@ -1,6 +1,5 @@
-
 import React, { useState, useRef, useEffect } from 'react';
-import { User, Settings, LogOut, Camera, Mail, Palette, X } from 'lucide-react';
+import { User, LogOut, Camera, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -155,20 +154,6 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
 
       if (error) throw error;
 
-      // Update email if changed
-      if (formData.email !== user?.email) {
-        const { error: emailError } = await supabase.auth.updateUser({
-          email: formData.email
-        });
-
-        if (emailError) throw emailError;
-
-        toast({
-          title: "Email Update",
-          description: "Please check your new email for confirmation",
-        });
-      }
-
       setProfile({ ...profile, ...formData, preferences });
       setIsEditing(false);
       toast({
@@ -292,71 +277,29 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
           {/* Profile Actions */}
           <div className="space-y-3 mb-6">
             {!isEditing ? (
-              <>
-                <Button
-                  onClick={() => setIsEditing(true)}
-                  className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20"
-                  variant="outline"
-                >
-                  <User className="h-4 w-4 mr-2" />
-                  Edit Profile
-                </Button>
-                
-                <Button
-                  className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20"
-                  variant="outline"
-                >
-                  <Mail className="h-4 w-4 mr-2" />
-                  Update Email
-                </Button>
-
-                <Button
-                  className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20"
-                  variant="outline"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  Preferences
-                </Button>
-              </>
+              <Button
+                onClick={() => setIsEditing(true)}
+                className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20"
+                variant="outline"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Edit Profile
+              </Button>
             ) : (
-              <div className="space-y-3">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full glass-input text-white placeholder-gray-400 px-3 py-2"
-                />
-                
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-300">Preferences</label>
-                  <div className="grid grid-cols-1 gap-2">
-                    <select
-                      value={preferences.theme}
-                      onChange={(e) => setPreferences(prev => ({ ...prev, theme: e.target.value }))}
-                      className="glass-input text-white px-3 py-2"
-                    >
-                      <option value="dark" className="bg-dark-bg">Dark Theme</option>
-                      <option value="light" className="bg-dark-bg">Light Theme</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="flex space-x-2">
-                  <Button
-                    onClick={handleSaveProfile}
-                    className="flex-1 bg-gradient-purple hover:opacity-90"
-                  >
-                    Save
-                  </Button>
-                  <Button
-                    onClick={() => setIsEditing(false)}
-                    variant="outline"
-                    className="flex-1 border-white/20 text-white hover:bg-white/10"
-                  >
-                    Cancel
-                  </Button>
-                </div>
+              <div className="flex space-x-2">
+                <Button
+                  onClick={handleSaveProfile}
+                  className="flex-1 bg-gradient-purple hover:opacity-90"
+                >
+                  Save
+                </Button>
+                <Button
+                  onClick={() => setIsEditing(false)}
+                  variant="outline"
+                  className="flex-1 border-white/20 text-white hover:bg-white/10"
+                >
+                  Cancel
+                </Button>
               </div>
             )}
           </div>
