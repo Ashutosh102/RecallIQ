@@ -50,16 +50,6 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ email, onVerified, on
         description: `Verification code sent to ${email}`,
       });
 
-      // For testing purposes, show the OTP in console
-      if (data?.otp) {
-        console.log('OTP for testing:', data.otp);
-        toast({
-          title: "Testing Mode",
-          description: `OTP: ${data.otp} (Check console for details)`,
-          variant: "default",
-        });
-      }
-
       // Reset countdown
       setCountdown(60);
       const timer = setInterval(() => {
