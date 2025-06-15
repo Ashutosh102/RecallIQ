@@ -49,7 +49,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send OTP via email using your verified domain
     const emailResponse = await resend.emails.send({
-      from: "RecallIQ <noreply@recalliq.com>",
+      from: "RecallIQ <noreply@primeflix-web.me>",
       to: [email],
       subject: "Your RecallIQ Verification Code",
       html: `
