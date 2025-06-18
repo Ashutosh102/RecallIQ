@@ -24,7 +24,8 @@ const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
     formatTime
   } = useAudioRecorder();
 
-  const handleStartRecording = async () => {
+  const handleStartRecording = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent form submission
     resetRecording();
     if (audioUrl) {
       URL.revokeObjectURL(audioUrl);
@@ -33,11 +34,18 @@ const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
     await startRecording();
   };
 
-  const handleStopRecording = () => {
+  const handleStopRecording = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent form submission
     stopRecording();
   };
 
-  const handleUploadRecording = async () => {
+  const handlePauseRecording = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent form submission
+    pauseRecording();
+  };
+
+  const handleUploadRecording = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent form submission
     if (!audioBlob) return;
 
     const file = new File([audioBlob], `recording-${Date.now()}.webm`, {
@@ -55,14 +63,16 @@ const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
     }
   };
 
-  const handlePlayRecording = () => {
+  const handlePlayRecording = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent form submission
     if (audioBlob && !audioUrl) {
       const url = URL.createObjectURL(audioBlob);
       setAudioUrl(url);
     }
   };
 
-  const handleDeleteRecording = () => {
+  const handleDeleteRecording = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent form submission
     resetRecording();
     if (audioUrl) {
       URL.revokeObjectURL(audioUrl);
@@ -85,6 +95,7 @@ const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
       <div className="flex items-center gap-3">
         {!isRecording && !audioBlob && (
           <Button
+            type="button"
             onClick={handleStartRecording}
             className="bg-red-500 hover:bg-red-600 text-white"
             size="sm"
@@ -97,7 +108,8 @@ const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
         {isRecording && (
           <>
             <Button
-              onClick={pauseRecording}
+              type="button"
+              onClick={handlePauseRecording}
               variant="outline"
               size="sm"
               className="border-white/20 text-white hover:bg-white/10"
@@ -105,6 +117,7 @@ const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
               {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
             </Button>
             <Button
+              type="button"
               onClick={handleStopRecording}
               className="bg-gray-600 hover:bg-gray-700 text-white"
               size="sm"
@@ -118,6 +131,7 @@ const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
         {audioBlob && (
           <>
             <Button
+              type="button"
               onClick={handlePlayRecording}
               variant="outline"
               size="sm"
@@ -127,6 +141,7 @@ const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
               Preview
             </Button>
             <Button
+              type="button"
               onClick={handleUploadRecording}
               disabled={uploading}
               className="bg-gradient-purple hover:opacity-90 text-white"
@@ -145,6 +160,7 @@ const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
               )}
             </Button>
             <Button
+              type="button"
               onClick={handleDeleteRecording}
               variant="outline"
               size="sm"
