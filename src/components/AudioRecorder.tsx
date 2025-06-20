@@ -112,7 +112,7 @@ const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
               onClick={handlePauseRecording}
               variant="outline"
               size="sm"
-              className="border-white/20 text-white hover:bg-white/10"
+              className="bg-white/20 border-white/40 text-white hover:bg-white/30 hover:border-white/60"
             >
               {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
             </Button>
@@ -135,7 +135,7 @@ const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
               onClick={handlePlayRecording}
               variant="outline"
               size="sm"
-              className="border-white/20 text-white hover:bg-white/10"
+              className="bg-white/20 border-white/40 text-white hover:bg-white/30 hover:border-white/60"
             >
               <Play className="h-4 w-4 mr-2" />
               Preview
