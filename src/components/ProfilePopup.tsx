@@ -296,7 +296,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
                 <Button
                   onClick={() => setIsEditing(false)}
                   variant="outline"
-                  className="flex-1 border-white/20 text-white hover:bg-white/10"
+                  className="flex-1 bg-white/20 border-white/40 text-white hover:bg-white/30 hover:border-white/60"
                 >
                   Cancel
                 </Button>
