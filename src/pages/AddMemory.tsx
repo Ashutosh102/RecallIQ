@@ -281,7 +281,7 @@ const AddMemory = () => {
                   type="button"
                   onClick={() => setShowAiSuggestions(false)}
                   variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10"
+                  className="bg-white/20 border-white/40 text-white hover:bg-white/30 hover:border-white/60"
                   size="sm"
                 >
                   Dismiss
