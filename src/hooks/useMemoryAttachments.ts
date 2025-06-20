@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -109,7 +109,7 @@ export const useMemoryAttachments = () => {
     }
   };
 
-  const fetchAttachments = async (memoryId: string) => {
+  const fetchAttachments = useCallback(async (memoryId: string) => {
     if (!user) return;
 
     setLoading(true);
@@ -131,7 +131,7 @@ export const useMemoryAttachments = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, toast]);
 
   return {
     attachments,
