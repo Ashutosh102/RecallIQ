@@ -1,7 +1,7 @@
 
-import { useMemo } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Filter, Calendar, ChevronDown } from 'lucide-react';
+import { Filter, Calendar, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { format } from 'date-fns';
@@ -32,12 +32,52 @@ const DashboardFilters = ({
   isDatePickerOpen,
   setIsDatePickerOpen
 }: DashboardFiltersProps) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
+
   // Extract dynamic categories from memories
   const categories = useMemo(() => {
     const allTags = memories.flatMap(memory => memory.tags || []);
     const uniqueTags = [...new Set(allTags)];
     return uniqueTags.sort();
   }, [memories]);
+
+  // Check scroll state
+  const checkScrollState = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
+      setScrollPosition(scrollWidth > clientWidth ? scrollLeft / (scrollWidth - clientWidth) : 0);
+    }
+  };
+
+  useEffect(() => {
+    checkScrollState();
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', checkScrollState);
+      return () => container.removeEventListener('scroll', checkScrollState);
+    }
+  }, [categories]);
+
+  useEffect(() => {
+    checkScrollState();
+  }, [categories]);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+    }
+  };
 
   const clearFilters = () => {
     setSelectedFilter('all');
@@ -87,56 +127,100 @@ const DashboardFilters = ({
         </div>
       </div>
 
-      {/* Category Filters */}
-      <div className="flex items-center space-x-2 mb-4 overflow-x-auto pb-2">
-        <Button
-          size="sm"
-          onClick={() => setSelectedFilter('all')}
-          className={`whitespace-nowrap ${
-            selectedFilter === 'all'
-              ? 'bg-white/20 border border-white/40 text-white'
-              : 'bg-white/10 border border-white/30 text-gray-400 hover:text-white hover:bg-white/20'
-          }`}
+      {/* Category Filters with Navigation */}
+      <div className="relative mb-4">
+        {/* Navigation Buttons */}
+        {canScrollLeft && (
+          <button
+            onClick={scrollLeft}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg hover:shadow-xl"
+            style={{ backdropFilter: 'blur(12px)' }}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+        )}
+        
+        {canScrollRight && (
+          <button
+            onClick={scrollRight}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg hover:shadow-xl"
+            style={{ backdropFilter: 'blur(12px)' }}
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        )}
+
+        {/* Scrollable Filter Container */}
+        <div 
+          ref={scrollContainerRef}
+          className="flex items-center space-x-2 overflow-x-auto scrollbar-hide pb-2 px-12 md:px-12"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          <Filter className="h-4 w-4 mr-2" />
-          All Memories
-        </Button>
-        <Button
-          size="sm"
-          onClick={() => setSelectedFilter('recent')}
-          className={`whitespace-nowrap ${
-            selectedFilter === 'recent'
-              ? 'bg-white/20 border border-white/40 text-white'
-              : 'bg-transparent text-gray-400 hover:text-white hover:bg-white/10'
-          }`}
-        >
-          Recent
-        </Button>
-        <Button
-          size="sm"
-          onClick={() => setSelectedFilter('people')}
-          className={`whitespace-nowrap ${
-            selectedFilter === 'people'
-              ? 'bg-white/20 border border-white/40 text-white'
-              : 'bg-transparent text-gray-400 hover:text-white hover:bg-white/10'
-          }`}
-        >
-          People
-        </Button>
-        {categories.map((category) => (
           <Button
-            key={category}
             size="sm"
-            onClick={() => setSelectedFilter(category)}
-            className={`whitespace-nowrap ${
-              selectedFilter === category
-                ? 'bg-purple-primary/30 border border-purple-primary/50 text-purple-300'
+            onClick={() => setSelectedFilter('all')}
+            className={`whitespace-nowrap flex-shrink-0 ${
+              selectedFilter === 'all'
+                ? 'bg-white/20 border border-white/40 text-white'
+                : 'bg-white/10 border border-white/30 text-gray-400 hover:text-white hover:bg-white/20'
+            }`}
+          >
+            <Filter className="h-4 w-4 mr-2" />
+            All Memories
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => setSelectedFilter('recent')}
+            className={`whitespace-nowrap flex-shrink-0 ${
+              selectedFilter === 'recent'
+                ? 'bg-white/20 border border-white/40 text-white'
                 : 'bg-transparent text-gray-400 hover:text-white hover:bg-white/10'
             }`}
           >
-            #{category}
+            Recent
           </Button>
-        ))}
+          <Button
+            size="sm"
+            onClick={() => setSelectedFilter('people')}
+            className={`whitespace-nowrap flex-shrink-0 ${
+              selectedFilter === 'people'
+                ? 'bg-white/20 border border-white/40 text-white'
+                : 'bg-transparent text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            People
+          </Button>
+          {categories.map((category) => (
+            <Button
+              key={category}
+              size="sm"
+              onClick={() => setSelectedFilter(category)}
+              className={`whitespace-nowrap flex-shrink-0 ${
+                selectedFilter === category
+                  ? 'bg-purple-primary/30 border border-purple-primary/50 text-purple-300'
+                  : 'bg-transparent text-gray-400 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              #{category}
+            </Button>
+          ))}
+        </div>
+
+        {/* Position Marker */}
+        {canScrollLeft || canScrollRight ? (
+          <div className="flex justify-center mt-3">
+            <div className="relative w-16 h-1">
+              <div className="absolute inset-0 bg-white/10 rounded-full"></div>
+              <div 
+                className="absolute h-full bg-white rounded-full transition-all duration-300 ease-out"
+                style={{ 
+                  width: '25%',
+                  left: `${scrollPosition * 75}%`
+                }}
+              ></div>
+            </div>
+          </div>
+        ) : null}
       </div>
 
       {/* Date Filters */}
@@ -197,6 +281,12 @@ const DashboardFilters = ({
           </PopoverContent>
         </Popover>
       </div>
+
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 };
