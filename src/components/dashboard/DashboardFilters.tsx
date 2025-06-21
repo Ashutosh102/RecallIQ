@@ -153,8 +153,12 @@ const DashboardFilters = ({
         {/* Scrollable Filter Container */}
         <div 
           ref={scrollContainerRef}
-          className="flex items-center space-x-2 overflow-x-auto scrollbar-hide pb-2 px-12 md:px-12"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          className="flex items-center space-x-2 overflow-x-auto pb-2 px-12 md:px-12"
+          style={{ 
+            scrollbarWidth: 'none', 
+            msOverflowStyle: 'none',
+            WebkitScrollbar: { display: 'none' }
+          }}
         >
           <Button
             size="sm"
@@ -281,12 +285,6 @@ const DashboardFilters = ({
           </PopoverContent>
         </Popover>
       </div>
-
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </div>
   );
 };
