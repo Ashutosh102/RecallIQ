@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { User, Calendar, Trash2, Paperclip, Image, Music, Video, FileText, ExternalLink, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { useMemoryAttachments, MemoryAttachment } from '@/hooks/useMemoryAttachments';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 interface MemoryCardProps {
   id: string;
@@ -17,6 +18,7 @@ interface MemoryCardProps {
 const MemoryCard = ({ id, title, summary, people = [], tags = [], date, onDelete }: MemoryCardProps) => {
   const [showAttachments, setShowAttachments] = useState(false);
   const { attachments, fetchAttachments } = useMemoryAttachments();
+  const { getSignedUrl } = useFileUpload();
 
   useEffect(() => {
     fetchAttachments(id);
@@ -51,8 +53,24 @@ const MemoryCard = ({ id, title, summary, people = [], tags = [], date, onDelete
     }
   };
 
-  const handleAttachmentClick = (url: string) => {
-    window.open(url, '_blank');
+  const handleAttachmentClick = async (attachment: MemoryAttachment) => {
+    try {
+      // Extract the file path from the URL or use the file name
+      const fileName = attachment.file_url.split('/').pop()?.split('?')[0] || attachment.file_name;
+      const filePath = fileName.includes('/') ? fileName : `${attachment.memory_id}/${fileName}`;
+      
+      const signedUrl = await getSignedUrl(filePath);
+      if (signedUrl) {
+        window.open(signedUrl, '_blank');
+      } else {
+        // Fallback to original URL if signed URL generation fails
+        window.open(attachment.file_url, '_blank');
+      }
+    } catch (error) {
+      console.error('Failed to open attachment:', error);
+      // Fallback to original URL
+      window.open(attachment.file_url, '_blank');
+    }
   };
 
   return (
@@ -102,7 +120,7 @@ const MemoryCard = ({ id, title, summary, people = [], tags = [], date, onDelete
               <div
                 key={attachment.id}
                 className="flex items-center justify-between text-xs text-gray-400 hover:text-white transition-colors cursor-pointer"
-                onClick={() => handleAttachmentClick(attachment.file_url)}
+                onClick={() => handleAttachmentClick(attachment)}
               >
                 <div className="flex items-center space-x-2">
                   {getFileIcon(attachment.file_type)}

@@ -39,14 +39,17 @@ export const useFileUpload = () => {
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
+      // Since the bucket is now private, we need to create a signed URL for access
+      const { data: { signedUrl }, error: urlError } = await supabase.storage
         .from('memory-attachments')
-        .getPublicUrl(filePath);
+        .createSignedUrl(filePath, 60 * 60 * 24 * 365); // 1 year expiry
+
+      if (urlError) throw urlError;
 
       return {
         id: fileName,
         name: file.name,
-        url: publicUrl,
+        url: signedUrl,
         type: file.type,
         size: file.size
       };
@@ -83,9 +86,26 @@ export const useFileUpload = () => {
     }
   };
 
+  const getSignedUrl = async (filePath: string): Promise<string | null> => {
+    if (!user) return null;
+
+    try {
+      const { data: { signedUrl }, error } = await supabase.storage
+        .from('memory-attachments')
+        .createSignedUrl(filePath, 60 * 60 * 24); // 24 hours expiry
+
+      if (error) throw error;
+      return signedUrl;
+    } catch (error: any) {
+      console.error('Failed to get signed URL:', error);
+      return null;
+    }
+  };
+
   return {
     uploadFile,
     deleteFile,
+    getSignedUrl,
     uploading
   };
 };

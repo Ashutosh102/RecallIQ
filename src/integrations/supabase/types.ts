@@ -209,6 +209,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_expired_otps_secure: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       create_email_verification_otp: {
         Args: { p_email: string }
         Returns: string

@@ -1,121 +1,147 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/use-toast';
+import { validatePassword } from '@/lib/passwordValidation';
+import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 
-interface SignUpFormProps {
-  onSubmit: (e: React.FormEvent, data: { email: string; password: string; firstName: string; lastName: string }) => void;
-  onOTPRequired: (email: string, formData: { email: string; password: string; firstName: string; lastName: string }) => void;
-  isLoading: boolean;
-}
+const SignUpForm = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit, onOTPRequired, isLoading }) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ 
-    email: '', 
-    password: '', 
-    firstName: '', 
-    lastName: '' 
-  });
+  const { signUp } = useAuth();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Trigger OTP verification instead of direct signup
-    onOTPRequired(formData.email, formData);
+    
+    // Validate password
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      toast({
+        title: "Password validation failed",
+        description: "Please ensure your password meets all requirements.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast({
+        title: "Passwords don't match",
+        description: "Please ensure both password fields match.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await signUp(email, password, firstName, lastName);
+      
+      if (error) {
+        toast({
+          title: "Sign up failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Check your email",
+          description: "We've sent you a confirmation link to complete your registration.",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Sign up failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="signup-firstname" className="text-white flex items-center gap-2">
-            <User className="h-4 w-4" />
-            First Name
-          </Label>
+        <div>
+          <Label htmlFor="firstName">First Name</Label>
           <Input
-            id="signup-firstname"
+            id="firstName"
             type="text"
-            placeholder="First name"
-            value={formData.firstName}
-            onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             required
-            className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 backdrop-blur-sm focus:bg-white/15 focus:border-purple-primary/50 transition-all duration-300"
+            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="signup-lastname" className="text-white flex items-center gap-2">
-            <User className="h-4 w-4" />
-            Last Name
-          </Label>
+        <div>
+          <Label htmlFor="lastName">Last Name</Label>
           <Input
-            id="signup-lastname"
+            id="lastName"
             type="text"
-            placeholder="Last name"
-            value={formData.lastName}
-            onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             required
-            className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 backdrop-blur-sm focus:bg-white/15 focus:border-purple-primary/50 transition-all duration-300"
+            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
           />
         </div>
       </div>
       
-      <div className="space-y-2">
-        <Label htmlFor="signup-email" className="text-white flex items-center gap-2">
-          <Mail className="h-4 w-4" />
-          Email
-        </Label>
+      <div>
+        <Label htmlFor="email">Email</Label>
         <Input
-          id="signup-email"
+          id="email"
           type="email"
-          placeholder="Enter your email"
-          value={formData.email}
-          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
-          className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 backdrop-blur-sm focus:bg-white/15 focus:border-purple-primary/50 transition-all duration-300"
+          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
         />
       </div>
       
-      <div className="space-y-2">
-        <Label htmlFor="signup-password" className="text-white flex items-center gap-2">
-          <Lock className="h-4 w-4" />
-          Password
-        </Label>
-        <div className="relative">
-          <Input
-            id="signup-password"
-            type={showPassword ? "text" : "password"}
-            placeholder="Create a password"
-            value={formData.password}
-            onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-            required
-            minLength={6}
-            className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 backdrop-blur-sm focus:bg-white/15 focus:border-purple-primary/50 transition-all duration-300 pr-10"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-          >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
-        </div>
+      <div>
+        <Label htmlFor="password">Password</Label>
+        <Input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+        />
+        <PasswordStrengthIndicator password={password} />
+      </div>
+      
+      <div>
+        <Label htmlFor="confirmPassword">Confirm Password</Label>
+        <Input
+          id="confirmPassword"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+        />
+        {confirmPassword && password !== confirmPassword && (
+          <p className="text-sm text-red-400 mt-1">Passwords don't match</p>
+        )}
       </div>
       
       <Button 
         type="submit" 
-        className="w-full bg-gradient-purple hover:opacity-90 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
-        disabled={isLoading}
+        className="w-full bg-purple-primary hover:bg-purple-secondary" 
+        disabled={loading}
       >
-        {isLoading ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            Processing...
-          </>
-        ) : (
-          'Continue with Email Verification'
-        )}
+        {loading ? 'Creating Account...' : 'Sign Up'}
       </Button>
     </form>
   );
