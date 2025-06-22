@@ -3,20 +3,22 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { validatePassword } from '@/lib/passwordValidation';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 
-const SignUpForm = () => {
+interface SignUpFormProps {
+  onSubmit: (e: React.FormEvent, data: { email: string; password: string; firstName: string; lastName: string }) => void;
+  onOTPRequired: (email: string, formData: any) => void;
+  isLoading: boolean;
+}
+
+const SignUpForm = ({ onSubmit, onOTPRequired, isLoading }: SignUpFormProps) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const { signUp } = useAuth();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,31 +44,8 @@ const SignUpForm = () => {
       return;
     }
 
-    setLoading(true);
-    try {
-      const { error } = await signUp(email, password, firstName, lastName);
-      
-      if (error) {
-        toast({
-          title: "Sign up failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Check your email",
-          description: "We've sent you a confirmation link to complete your registration.",
-        });
-      }
-    } catch (error: any) {
-      toast({
-        title: "Sign up failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+    // Call the onSubmit prop passed from AuthCard
+    onSubmit(e, { email, password, firstName, lastName });
   };
 
   return (
@@ -139,9 +118,9 @@ const SignUpForm = () => {
       <Button 
         type="submit" 
         className="w-full bg-purple-primary hover:bg-purple-secondary" 
-        disabled={loading}
+        disabled={isLoading}
       >
-        {loading ? 'Creating Account...' : 'Sign Up'}
+        {isLoading ? 'Creating Account...' : 'Sign Up'}
       </Button>
     </form>
   );
