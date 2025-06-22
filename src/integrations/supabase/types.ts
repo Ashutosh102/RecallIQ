@@ -42,6 +42,44 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_transactions: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          credits_remaining: number
+          credits_used: number
+          description: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          credits_remaining: number
+          credits_used: number
+          description?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          credits_remaining?: number
+          credits_used?: number
+          description?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_verification_otps: {
         Row: {
           attempts: number | null
@@ -71,6 +109,47 @@ export type Database = {
           verified?: boolean | null
         }
         Relationships: []
+      }
+      freemium_usage: {
+        Row: {
+          ai_searches: number | null
+          created_at: string | null
+          id: string
+          memory_saves: number | null
+          memory_saves_with_media: number | null
+          month_year: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_searches?: number | null
+          created_at?: string | null
+          id?: string
+          memory_saves?: number | null
+          memory_saves_with_media?: number | null
+          month_year: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_searches?: number | null
+          created_at?: string | null
+          id?: string
+          memory_saves?: number | null
+          memory_saves_with_media?: number | null
+          month_year?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "freemium_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       memories: {
         Row: {
@@ -174,28 +253,40 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string | null
+          credits: number | null
           first_name: string | null
           id: string
+          is_premium: boolean | null
+          joined_at: string | null
           last_name: string | null
           preferences: Json | null
+          premium_expires_at: string | null
           updated_at: string | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
+          credits?: number | null
           first_name?: string | null
           id: string
+          is_premium?: boolean | null
+          joined_at?: string | null
           last_name?: string | null
           preferences?: Json | null
+          premium_expires_at?: string | null
           updated_at?: string | null
         }
         Update: {
           avatar_url?: string | null
           created_at?: string | null
+          credits?: number | null
           first_name?: string | null
           id?: string
+          is_premium?: boolean | null
+          joined_at?: string | null
           last_name?: string | null
           preferences?: Json | null
+          premium_expires_at?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -205,6 +296,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_credits: {
+        Args: {
+          p_user_id: string
+          p_credits_to_add: number
+          p_description?: string
+        }
+        Returns: Json
+      }
+      check_and_update_premium_status: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
       cleanup_expired_otps: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -216,6 +319,15 @@ export type Database = {
       create_email_verification_otp: {
         Args: { p_email: string }
         Returns: string
+      }
+      deduct_credits: {
+        Args: {
+          p_user_id: string
+          p_action_type: string
+          p_credits_to_deduct: number
+          p_description?: string
+        }
+        Returns: Json
       }
       generate_otp: {
         Args: Record<PropertyKey, never>
