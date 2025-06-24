@@ -1,10 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef, useEffect } from 'react';
-import { User, LogOut, Camera, X } from 'lucide-react';
+import { User, LogOut, Camera, X, Coins, Crown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useCredits } from '@/hooks/useCredits';
+import { useNavigate } from 'react-router-dom';
 
 interface ProfilePopupProps {
   isOpen: boolean;
@@ -21,6 +25,8 @@ interface UserPreferences {
 const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef }) => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
+  const { profile: creditProfile, getDaysUntilExpiry } = useCredits();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -304,6 +310,45 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, anchorRef 
             )}
           </div>
 
+          {/* Credits Section */}
+          {!isEditing && creditProfile && (
+            <div className="mb-6 p-4 bg-white/5 border border-white/20 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium text-white">Your Credits</h4>
+                {creditProfile.is_premium && (
+                  <div className="flex items-center">
+                    <Crown className="h-4 w-4 text-yellow-400 mr-1" />
+                    <span className="text-xs text-yellow-400">Premium</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Coins className="h-5 w-5 text-purple-400 mr-2" />
+                  <span className="text-lg font-bold text-white">{creditProfile.credits}</span>
+                </div>
+                
+                <Button 
+                  size="sm" 
+                  onClick={() => {
+                    onClose();
+                    navigate('/upgrade');
+                  }}
+                  className="bg-gradient-purple hover:opacity-90 text-white text-xs"
+                >
+                  Get More
+                </Button>
+              </div>
+              
+              {creditProfile.is_premium && (
+                <p className="text-xs text-gray-400 mt-2">
+                  Premium expires in {getDaysUntilExpiry()} days
+                </p>
+              )}
+            </div>
+          )}
+          
           {/* Logout Button */}
           {!isEditing && (
             <Button

@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import CreditsUpgrade from '@/components/credits/CreditsUpgrade';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 
 // Razorpay types
 interface RazorpayResponse {
@@ -71,28 +72,22 @@ const Upgrade = () => {
     setLoading(true);
 
     try {
-      // Create order on backend (you'll need to implement this)
-      const orderResponse = await fetch('/api/create-razorpay-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // Create order using Supabase Edge Function
+      const { data: orderData, error: orderError } = await supabase.functions.invoke('create-razorpay-order', {
+        body: {
           amount: price * 100, // Razorpay expects amount in paisa
           currency: 'INR',
           receipt: `credit_purchase_${Date.now()}`,
-        }),
+        },
       });
 
-      const orderData = await orderResponse.json();
-
-      if (!orderData.success) {
-        throw new Error('Failed to create order');
+      if (orderError || !orderData.success) {
+        throw new Error(orderError?.message || orderData?.error || 'Failed to create order');
       }
 
       // Initialize Razorpay
       const options: RazorpayOptions = {
-        key: 'YOUR_RAZORPAY_KEY_ID', // Replace with your Razorpay key
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Get from environment variables
         amount: price * 100,
         currency: 'INR',
         name: 'RecallIQ',
@@ -100,21 +95,19 @@ const Upgrade = () => {
         order_id: orderData.order.id,
         handler: async (response: RazorpayResponse) => {
           try {
-            // Verify payment on backend
-            const verifyResponse = await fetch('/api/verify-razorpay-payment', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
+            // Verify payment using Supabase Edge Function
+            const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-razorpay-payment', {
+              body: {
                 ...response,
                 credits,
                 user_id: profile.id,
-              }),
+              },
             });
 
-            const verifyData = await verifyResponse.json();
-
+            if (verifyError) {
+              throw new Error(verifyError.message);
+            }
+            
             if (verifyData.success) {
               toast({
                 title: "Payment successful!",

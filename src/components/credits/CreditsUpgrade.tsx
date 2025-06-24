@@ -112,11 +112,11 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
           return (
             <Card 
               key={pkg.credits}
-              className={`relative transition-all cursor-pointer ${
+              className={`relative transition-all duration-300 cursor-pointer transform hover:scale-105 ${
                 isSelected 
-                  ? 'ring-2 ring-purple-primary bg-purple-primary/10' 
-                  : 'hover:bg-white/5'
-              } ${pkg.popular ? 'border-purple-primary' : 'border-white/20'}`}
+                  ? 'bg-gradient-purple hover:opacity-90 hover:shadow-lg hover:shadow-purple-primary/30 transition-all duration-300 ring-2 ring-purple-primary bg-gradient-to-br from-purple-primary/10 to-teal-accent/5 shadow-lg shadow-purple-primary/20' 
+                  : 'bg-white/20 border-white/40 hover:bg-white/30 hover:border-white/60'
+              } ${pkg.popular ? 'border-purple-primary' : ''}`}
               onClick={() => setSelectedCredits([pkg.credits])}
             >
               {pkg.popular && (
@@ -126,14 +126,14 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
               )}
               
               <CardHeader className="text-center">
-                <div className="mx-auto mb-4 w-12 h-12 bg-gradient-purple rounded-full flex items-center justify-center">
-                  <Icon className="h-6 w-6 text-white" />
+                <div className={`mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center ${isSelected ? 'bg-gradient-purple' : 'bg-white/30'}`}>
+                  <Icon className={`h-6 w-6 ${isSelected ? 'text-white' : 'text-purple-200'}`} />
                 </div>
-                <CardTitle className="text-white text-xl">{pkg.title}</CardTitle>
-                <CardDescription className="text-gray-400">{pkg.description}</CardDescription>
+                <CardTitle className={`${isSelected ? 'text-white' : 'text-white/90'} text-xl`}>{pkg.title}</CardTitle>
+                <CardDescription className={`${isSelected ? 'text-gray-400' : 'text-gray-400/90'}`}>{pkg.description}</CardDescription>
                 <div className="mt-4">
-                  <span className="text-3xl font-bold text-white">₹{pkg.price}</span>
-                  <span className="text-gray-400 ml-2">for {pkg.credits} credits</span>
+                  <span className={`text-3xl font-bold ${isSelected ? 'text-white' : 'text-white/90'}`}>₹{pkg.price}</span>
+                  <span className={`${isSelected ? 'text-gray-400' : 'text-gray-400/90'} ml-2`}>for {pkg.credits} credits</span>
                 </div>
               </CardHeader>
               
@@ -141,8 +141,8 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
                 <ul className="space-y-2">
                   {pkg.features.map((feature, index) => (
                     <li key={index} className="flex items-center text-gray-300">
-                      <Check className="h-4 w-4 text-green-400 mr-2 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
+                      <Check className={`h-4 w-4 ${isSelected ? 'text-green-400' : 'text-green-400/80'} mr-2 flex-shrink-0`} />
+                      <span className={`text-sm ${isSelected ? 'text-gray-300' : 'text-gray-300/90'}`}>{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -154,11 +154,14 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
 
       {/* Purchase Button */}
       <div className="text-center">
-        <div className="mb-4 p-4 glass-card inline-block">
-          <h3 className="text-lg font-semibold text-white mb-2">Selected Package</h3>
-          <div className="flex items-center justify-center space-x-4">
+        <div className="mb-4 p-4 glass-card-selected inline-block shadow-lg shadow-purple-primary/20 transform transition-all duration-300">
+          <h3 className="text-lg font-semibold gradient-text mb-2">Selected Package</h3>
+          <div className="flex items-center justify-center space-x-6">
             <div className="text-center">
-              <p className="text-2xl font-bold text-purple-400">{selectedPackage.credits}</p>
+              <div className="flex items-center justify-center">
+                <Coins className="h-5 w-5 text-purple-400 mr-2" />
+                <p className="text-2xl font-bold text-purple-400">{selectedPackage.credits}</p>
+              </div>
               <p className="text-sm text-gray-400">Credits</p>
             </div>
             <div className="text-center">
@@ -170,10 +173,11 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
         
         <Button
           onClick={() => onUpgrade(selectedPackage.credits, selectedPackage.price)}
-          className="bg-gradient-purple hover:opacity-90 text-white px-8 py-3 text-lg"
+          className="bg-gradient-purple hover:opacity-90 hover:shadow-lg hover:shadow-purple-primary/30 transition-all duration-300 text-white px-8 py-3 text-lg"
           disabled={loading}
           size="lg"
         >
+          <Coins className="h-5 w-5 mr-2" />
           {loading ? 'Processing...' : `Purchase ${selectedPackage.credits} Credits for ₹${selectedPackage.price}`}
         </Button>
       </div>

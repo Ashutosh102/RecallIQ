@@ -11,6 +11,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import AddMemory from "./pages/AddMemory";
 import SearchMemory from "./pages/SearchMemory";
+import Upgrade from "./pages/Upgrade";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,11 @@ const App = () => (
             <Route path="/search" element={
               <ProtectedRoute>
                 <SearchMemory />
+              </ProtectedRoute>
+            } />
+            <Route path="/upgrade" element={
+              <ProtectedRoute>
+                <Upgrade />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />

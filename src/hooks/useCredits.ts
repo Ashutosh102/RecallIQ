@@ -109,7 +109,10 @@ export const useCredits = () => {
 
       if (error) throw error;
 
-      if (data.success) {
+      // Type assertion for the RPC response
+      const typedData = data as { success: boolean; error?: string };
+
+      if (typedData.success) {
         // Refresh profile and transactions
         await fetchProfile();
         await fetchTransactions();
@@ -119,12 +122,12 @@ export const useCredits = () => {
       } else {
         toast({
           title: "Action blocked",
-          description: data.error,
+          description: typedData.error,
           variant: "destructive",
         });
       }
 
-      return data;
+      return typedData;
     } catch (error: any) {
       console.error('Error deducting credits:', error);
       toast({
@@ -132,7 +135,7 @@ export const useCredits = () => {
         description: "Failed to process action",
         variant: "destructive",
       });
-      return { success: false, error: error.message };
+      return { success: false, error: error.message } as { success: boolean; error: string };
     }
   };
 
@@ -146,13 +149,16 @@ export const useCredits = () => {
 
       if (error) throw error;
       
+      // Type assertion for the RPC response
+      const typedData = data as boolean;
+      
       // Refresh profile after status check
       await fetchProfile();
-      if (!data) {
+      if (!typedData) {
         await fetchFreemiumUsage();
       }
       
-      return data;
+      return typedData;
     } catch (error: any) {
       console.error('Error checking premium status:', error);
       return false;

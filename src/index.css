@@ -105,6 +105,13 @@
       inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
   }
   
+  .glass-card-selected {
+    @apply bg-gradient-to-br from-purple-primary/20 to-blue-neon/10 backdrop-blur-lg border border-purple-primary/50 rounded-xl;
+    box-shadow: 
+      0 8px 32px 0 rgba(139, 92, 246, 0.3),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  }
+  
   .glow-effect {
     @apply shadow-2xl shadow-purple-primary/20;
     animation: glow-pulse 3s ease-in-out infinite alternate;

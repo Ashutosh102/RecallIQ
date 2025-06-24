@@ -2,10 +2,12 @@
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Plus, Search, Menu, X } from 'lucide-react';
+import { Plus, Search, Menu, X, Coins } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ProfilePopup from '@/components/ProfilePopup';
+import { useCredits } from '@/hooks/useCredits';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface DashboardHeaderProps {
   isMenuOpen: boolean;
@@ -22,6 +24,7 @@ const DashboardHeader = ({
 }: DashboardHeaderProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { profile: creditProfile } = useCredits();
   const profileIconRef = useRef<HTMLButtonElement>(null);
 
   const handleAddMemory = () => {
@@ -70,6 +73,29 @@ const DashboardHeader = ({
                 <Plus className="h-4 w-4 mr-2" />
                 Add Memory
               </Button>
+              
+              {/* Credits Display */}
+              {creditProfile && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={() => navigate('/upgrade')}
+                        variant="outline"
+                        size="sm"
+                        className="bg-white/5 border border-purple-primary/30 text-white hover:bg-white/10"
+                      >
+                        <Coins className="h-4 w-4 mr-2 text-purple-primary" />
+                        <span className="font-medium">{creditProfile.credits}</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>You have {creditProfile.credits} credits</p>
+                      <p className="text-xs text-gray-400">Click to get more</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
               
               {/* Profile Button */}
               <button

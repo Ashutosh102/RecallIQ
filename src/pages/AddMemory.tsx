@@ -10,6 +10,7 @@ import { useMemoryAttachments } from '@/hooks/useMemoryAttachments';
 import { useToast } from '@/components/ui/use-toast';
 import FileUpload from '@/components/FileUpload';
 import AudioRecorder from '@/components/AudioRecorder';
+import CreditsBanner from '@/components/credits/CreditsBanner';
 import { UploadedFile } from '@/hooks/useFileUpload';
 
 const AddMemory = () => {
@@ -178,6 +179,9 @@ const AddMemory = () => {
             Capture important people, conversations, and moments with AI enhancement
           </p>
         </div>
+        
+        {/* Credits Banner */}
+        <CreditsBanner />
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Title Input */}

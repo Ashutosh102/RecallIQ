@@ -7,6 +7,7 @@ import { Search, ArrowLeft, Brain, Lightbulb } from 'lucide-react';
 import MemoryCard from '@/components/MemoryCard';
 import { aiService, AISearchResponse } from '@/lib/ai';
 import { useMemories } from '@/hooks/useMemories';
+import CreditsBanner from '@/components/credits/CreditsBanner';
 
 const SearchMemory = () => {
   const navigate = useNavigate();
@@ -96,6 +97,9 @@ const SearchMemory = () => {
             Ask natural questions about your memories and get instant AI-powered results
           </p>
         </div>
+        
+        {/* Credits Banner */}
+        <CreditsBanner />
 
         {/* Search Input */}
         <div className="glass-card p-6 mb-8">

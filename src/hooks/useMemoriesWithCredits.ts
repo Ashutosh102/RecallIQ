@@ -16,8 +16,11 @@ export const useMemoriesWithCredits = () => {
     // Try to deduct credits first
     const result = await deductCredits(actionType, creditCost, `Memory save: ${memoryData.title}`);
     
-    if (!result.success) {
-      return { success: false, error: result.error };
+    // Type assertion for the result
+    const typedResult = result as { success: boolean; error?: string };
+    
+    if (!typedResult.success) {
+      return { success: false, error: typedResult.error };
     }
 
     try {

@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 
 import { useState, useMemo } from 'react';
 import AIInsights from '@/components/AIInsights';
@@ -5,6 +6,7 @@ import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardFilters from '@/components/dashboard/DashboardFilters';
 import MemoryGrid from '@/components/dashboard/MemoryGrid';
 import MobileMenu from '@/components/dashboard/MobileMenu';
+import CreditsBanner from '@/components/credits/CreditsBanner';
 import { useMemories } from '@/hooks/useMemories';
 
 const Dashboard = () => {
@@ -136,6 +138,9 @@ const Dashboard = () => {
             {filteredMemories.length} of {memories.length} memories {selectedFilter !== 'all' || selectedDateFilter !== 'all' ? 'filtered' : 'stored'} • Never forget important connections again
           </p>
         </div>
+        
+        {/* Credits Banner */}
+        <CreditsBanner />
 
         {/* AI Insights Section */}
         <div className="mb-8">
