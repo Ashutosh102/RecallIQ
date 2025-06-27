@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useMemories } from '@/hooks/useMemories';
 import { useCredits } from '@/hooks/useCredits';

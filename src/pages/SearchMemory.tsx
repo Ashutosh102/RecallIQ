@@ -8,6 +8,7 @@ import MemoryCard from '@/components/MemoryCard';
 import { aiService, AISearchResponse } from '@/lib/ai';
 import { useMemories } from '@/hooks/useMemories';
 import CreditsBanner from '@/components/credits/CreditsBanner';
+import { useAISearchWithCredits } from '@/hooks/useAISearchWithCredits';
 
 const SearchMemory = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const SearchMemory = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [aiResponse, setAiResponse] = useState<AISearchResponse | null>(null);
   const [searchResults, setSearchResults] = useState(memories);
+  const { searchMemoriesWithCredits } = useAISearchWithCredits();
 
   const exampleQueries = [
     "Who was the React guy from Hyderabad?",
@@ -35,12 +37,19 @@ const SearchMemory = () => {
     try {
       // If AI service is available, use it for enhanced search
       try {
-        const aiSearchResult = await aiService.searchMemories(searchQuery, memories);
-        setAiResponse(aiSearchResult);
+        const { success, searchResult, error: creditError } = await searchMemoriesWithCredits(searchQuery, memories);
+
+        if (!success) {
+          // The toast is already handled by useAISearchWithCredits
+          setIsSearching(false);
+          return;
+        }
+
+        setAiResponse(searchResult);
         
         // Filter results based on AI interpretation
         const filteredResults = memories.filter(memory => 
-          aiSearchResult.relevantMemories.includes(memory.id)
+          searchResult.relevantMemories.includes(memory.id)
         );
         setSearchResults(filteredResults);
       } catch (aiError) {

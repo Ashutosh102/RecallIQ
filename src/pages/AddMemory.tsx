@@ -11,11 +11,13 @@ import { useToast } from '@/components/ui/use-toast';
 import FileUpload from '@/components/FileUpload';
 import AudioRecorder from '@/components/AudioRecorder';
 import CreditsBanner from '@/components/credits/CreditsBanner';
+import { useMemoriesWithCredits } from '@/hooks/useMemoriesWithCredits';
 import { UploadedFile } from '@/hooks/useFileUpload';
 
 const AddMemory = () => {
   const navigate = useNavigate();
   const { addMemory } = useMemories();
+  const { addMemoryWithCredits } = useMemoriesWithCredits();
   const { addAttachment } = useMemoryAttachments();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -116,12 +118,23 @@ const AddMemory = () => {
         } : {}
       };
 
-      const savedMemory = await addMemory(memoryData);
+      const hasMedia = uploadedFiles.length > 0;
+      const { success, memory, error: creditError } = await addMemoryWithCredits(memoryData, hasMedia);
+
+      if (!success) {
+        toast({
+          title: "Credit Deduction Failed",
+          description: creditError || "Could not deduct credits for saving memory.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
       
       // Upload attachments if any
-      if (uploadedFiles.length > 0 && savedMemory) {
+      if (uploadedFiles.length > 0 && memory) {
         const attachmentPromises = uploadedFiles.map(file => 
-          addAttachment(savedMemory.id, file)
+          addAttachment(memory.id, file)
         );
         await Promise.all(attachmentPromises);
       }

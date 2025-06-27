@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -100,7 +101,7 @@ export const useCredits = () => {
     if (!user) return { success: false, error: 'User not authenticated' };
 
     try {
-      const { data, error } = await supabase.rpc('deduct_credits', {
+       const { data, error } = await supabase.rpc('deduct_credits', {
         p_user_id: user.id,
         p_action_type: actionType,
         p_credits_to_deduct: creditsToDeduct,
