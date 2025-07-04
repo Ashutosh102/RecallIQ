@@ -136,7 +136,7 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4, duration: 0.6 }}
         >
-          <div className="glass-card p-8 mb-8">
+          <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-8 mb-8 shadow-lg shadow-purple-primary/10">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-semibold text-white mb-2">Interactive Credit Selector</h3>
               <p className="text-gray-400">Drag the meter or click on checkpoints to select your package</p>
@@ -175,8 +175,8 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
                 <Card 
                   className={`relative transition-all duration-500 cursor-pointer h-full ${
                     isSelected 
-                      ? 'glass-card-selected ring-2 ring-purple-primary/50 shadow-2xl shadow-purple-primary/20' 
-                      : 'glass-card hover:bg-white/10 hover:border-white/20'
+                      ? 'bg-gradient-to-r from-purple-primary to-teal-accent backdrop-blur-lg border border-purple-primary/50 rounded-xl shadow-2xl shadow-purple-primary/30 ring-2 ring-purple-primary/50' 
+                      : 'bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20'
                   }`}
                 >
                   {pkg.popular && (
@@ -195,7 +195,7 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
                   <CardHeader className="text-center pb-4">
                     <motion.div 
                       className={`mx-auto mb-4 w-16 h-16 rounded-full flex items-center justify-center relative ${
-                        isSelected ? `bg-gradient-to-r ${pkg.color}` : 'bg-white/10'
+                        isSelected ? `bg-gradient-to-r ${pkg.color} shadow-lg shadow-${pkg.color.split(' ')[1]}/30` : 'bg-white/10'
                       }`}
                       animate={isSelected ? { rotate: 360 } : {}}
                       transition={{ duration: 0.8, ease: "easeInOut" }}
@@ -210,10 +210,10 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
                       )}
                     </motion.div>
                     
-                    <CardTitle className={`text-2xl mb-2 ${isSelected ? 'text-white' : 'text-white/90'}`}>
+                    <CardTitle className={`text-2xl mb-2 ${isSelected ? 'text-white font-bold' : 'text-white/90'}`}>
                       {pkg.title}
                     </CardTitle>
-                    <CardDescription className={`${isSelected ? 'text-gray-300' : 'text-gray-400'}`}>
+                    <CardDescription className={`${isSelected ? 'text-white/80' : 'text-gray-400'}`}>
                       {pkg.description}
                     </CardDescription>
                     
@@ -221,7 +221,7 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
                       <div className={`text-4xl font-bold ${isSelected ? 'text-white' : 'text-white/90'}`}>
                         ₹{pkg.price}
                       </div>
-                      <div className={`text-lg ${isSelected ? 'gradient-text' : 'text-gray-400'}`}>
+                      <div className={`text-lg ${isSelected ? 'text-white font-semibold' : 'text-gray-400'}`}>
                         {pkg.credits} credits
                       </div>
                     </div>
@@ -240,7 +240,7 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
                           <Check className={`h-4 w-4 mr-3 flex-shrink-0 ${
                             isSelected ? 'text-green-400' : 'text-green-400/70'
                           }`} />
-                          <span className={`text-sm ${isSelected ? 'text-gray-200' : 'text-gray-300'}`}>
+                          <span className={`text-sm ${isSelected ? 'text-white' : 'text-gray-300'}`}>
                             {feature}
                           </span>
                         </motion.li>
@@ -292,23 +292,25 @@ const CreditsUpgrade = ({ onUpgrade, loading = false }: CreditsUpgradeProps) => 
           >
             <Button
               onClick={() => onUpgrade(selectedPackage.credits, selectedPackage.price)}
-              className="bg-gradient-to-r from-purple-primary to-teal-accent hover:from-purple-primary/90 hover:to-teal-accent/90 text-white px-12 py-4 text-xl font-semibold rounded-xl shadow-2xl hover:shadow-purple-primary/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-purple-primary to-teal-accent hover:from-purple-primary/90 hover:to-teal-accent/90 text-white px-4 sm:px-6 md:px-8 lg:px-12 py-3 md:py-4 text-base sm:text-lg md:text-xl font-semibold rounded-xl shadow-xl md:shadow-2xl hover:shadow-purple-primary/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
               disabled={loading}
               size="lg"
             >
               {loading ? (
                 <motion.div
-                  className="flex items-center"
+                  className="flex items-center justify-center"
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 >
-                  <Sparkles className="h-6 w-6 mr-3" />
+                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 mr-2 md:mr-3" />
                   Processing...
                 </motion.div>
               ) : (
-                <div className="flex items-center">
-                  <Coins className="h-6 w-6 mr-3" />
-                  Purchase {selectedPackage.credits} Credits for ₹{selectedPackage.price}
+                <div className="flex items-center justify-center flex-wrap sm:flex-nowrap">
+                  <Coins className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 mr-2 md:mr-3 flex-shrink-0" />
+                  <span className="sm:whitespace-nowrap">Purchase {selectedPackage.credits} Credits</span>
+                  <span className="hidden sm:inline mx-1">for</span>
+                  <span className="sm:whitespace-nowrap">₹{selectedPackage.price}</span>
                 </div>
               )}
             </Button>
