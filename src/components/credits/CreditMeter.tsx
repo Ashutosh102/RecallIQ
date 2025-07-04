@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Coins, Zap, Crown, Sparkles } from 'lucide-react';
@@ -125,12 +126,12 @@ const CreditMeter = ({ selectedPackage, onPackageChange }: CreditMeterProps) => 
   };
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto px-8 md:px-12">
+    <div className="relative w-full max-w-6xl mx-auto px-4 md:px-8">
       {/* Meter Track Container */}
-      <div className="relative mb-16">
+      <div className="relative mb-20">
         {/* Meter Track */}
         <div 
-          className="relative h-16 md:h-20 bg-gradient-to-r from-dark-secondary/30 via-dark-secondary/50 to-dark-secondary/30 rounded-full border border-white/10 cursor-pointer overflow-hidden group mx-8"
+          className="relative h-20 md:h-24 bg-gradient-to-r from-dark-secondary/30 via-dark-secondary/50 to-dark-secondary/30 rounded-full border border-white/10 cursor-pointer overflow-hidden group mx-16 md:mx-20"
           onClick={handleMeterClick}
         >
           {/* Animated background glow */}
@@ -151,7 +152,7 @@ const CreditMeter = ({ selectedPackage, onPackageChange }: CreditMeterProps) => 
           
           {/* Meter handle */}
           <motion.div
-            className="absolute top-1/2 transform -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 z-10"
+            className="absolute top-1/2 transform -translate-y-1/2 w-16 h-16 md:w-20 md:h-20 z-10"
             initial={{ left: "50%" }}
             animate={{ left: `${meterPosition}%` }}
             transition={{ 
@@ -161,11 +162,11 @@ const CreditMeter = ({ selectedPackage, onPackageChange }: CreditMeterProps) => 
               duration: 0.5 
             }}
             style={{ 
-              marginLeft: meterPosition === 0 ? '0px' : meterPosition === 100 ? '-48px' : '-24px'
+              marginLeft: meterPosition === 0 ? '0px' : meterPosition === 100 ? '-64px' : '-32px'
             }}
           >
             <div className={`w-full h-full rounded-full bg-gradient-to-r ${selectedPackage.color} shadow-2xl border-2 md:border-4 border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-              <selectedPackage.icon className="w-4 h-4 md:w-6 md:h-6 text-white drop-shadow-lg" />
+              <selectedPackage.icon className="w-6 h-6 md:w-8 md:h-8 text-white drop-shadow-lg" />
               
               {/* Pulsing glow effect */}
               <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${selectedPackage.color} opacity-50 animate-ping`}></div>
@@ -174,15 +175,12 @@ const CreditMeter = ({ selectedPackage, onPackageChange }: CreditMeterProps) => 
           
           {/* Checkpoint indicators */}
           {CREDIT_PACKAGES.map((pkg, index) => {
-            // Calculate safe positions to prevent overflow
-            const safePosition = pkg.position === 0 ? 8 : pkg.position === 100 ? 92 : pkg.position;
-            
             return (
               <div
                 key={pkg.credits}
                 className="absolute top-1/2 transform -translate-y-1/2 cursor-pointer group/checkpoint z-20"
                 style={{ 
-                  left: `${safePosition}%`,
+                  left: `${pkg.position}%`,
                   marginLeft: pkg.position === 0 ? '0px' : pkg.position === 100 ? '-16px' : '-8px'
                 }}
                 onClick={(e) => {
@@ -190,7 +188,7 @@ const CreditMeter = ({ selectedPackage, onPackageChange }: CreditMeterProps) => 
                   handleCheckpointClick(pkg);
                 }}
               >
-                <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full border-2 transition-all duration-300 ${
+                <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full border-2 transition-all duration-300 ${
                   selectedPackage.credits === pkg.credits 
                     ? 'bg-white border-white shadow-lg scale-125' 
                     : 'bg-white/30 border-white/50 group-hover/checkpoint:bg-white/50 group-hover/checkpoint:scale-110'
@@ -201,19 +199,19 @@ const CreditMeter = ({ selectedPackage, onPackageChange }: CreditMeterProps) => 
                       animate={{ scale: 1 }}
                       className="w-full h-full rounded-full bg-gradient-to-r from-purple-primary to-teal-accent flex items-center justify-center"
                     >
-                      <Sparkles className="w-2 h-2 md:w-3 md:h-3 text-white" />
+                      <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-white" />
                     </motion.div>
                   )}
                 </div>
                 
                 {/* Checkpoint label */}
-                <div className="absolute top-full mt-3 md:mt-4 left-1/2 transform -translate-x-1/2 text-center whitespace-nowrap">
-                  <div className={`text-xs md:text-sm font-medium transition-colors duration-300 ${
+                <div className="absolute top-full mt-4 md:mt-6 left-1/2 transform -translate-x-1/2 text-center whitespace-nowrap">
+                  <div className={`text-sm md:text-base font-bold transition-colors duration-300 ${
                     selectedPackage.credits === pkg.credits ? 'text-white' : 'text-gray-400'
                   }`}>
                     {pkg.credits}
                   </div>
-                  <div className="text-xs text-gray-500">credits</div>
+                  <div className="text-xs md:text-sm text-gray-500">credits</div>
                 </div>
               </div>
             );
