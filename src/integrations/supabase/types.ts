@@ -249,6 +249,50 @@ export type Database = {
           },
         ]
       }
+      payment_records: {
+        Row: {
+          amount_credits: number
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          order_id: string
+          payment_id: string
+          payment_provider: string
+          payment_status: string
+          user_id: string
+        }
+        Insert: {
+          amount_credits: number
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          order_id: string
+          payment_id: string
+          payment_provider: string
+          payment_status: string
+          user_id: string
+        }
+        Update: {
+          amount_credits?: number
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          order_id?: string
+          payment_id?: string
+          payment_provider?: string
+          payment_status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

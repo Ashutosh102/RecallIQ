@@ -31,8 +31,7 @@ export const useAISearchWithCredits = () => {
 
       toast({
         title: "AI Search successful!",
-        description: `${creditCost} ${creditCost === 1 ? 'credit' : 'credits'} deducted.`,
-
+        description: `${creditCost} credits deducted.`,
       });
 
       return { success: true, searchResult };
