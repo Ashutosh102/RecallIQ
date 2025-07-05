@@ -83,14 +83,22 @@ const Globe = () => {
         ))}
         
         {/* Connection lines */}
-        {connectionLines.map((line, index) => {
-          const geometry = new THREE.BufferGeometry().setFromPoints(line);
-          return (
-            <line key={index} geometry={geometry}>
-              <lineBasicMaterial color="#8B5CF6" transparent opacity={0.3} />
-            </line>
-          );
-        })}
+        {connectionLines.map((line, index) => (
+          <mesh key={index}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                count={2}
+                array={new Float32Array([
+                  line[0].x, line[0].y, line[0].z,
+                  line[1].x, line[1].y, line[1].z
+                ])}
+                itemSize={3}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial color="#8B5CF6" transparent opacity={0.3} />
+          </mesh>
+        ))}
       </group>
 
       {/* Ambient stars */}

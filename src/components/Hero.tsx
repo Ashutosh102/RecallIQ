@@ -48,30 +48,7 @@ const Hero = () => {
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
-    }
-  };
-
-  const floatingVariants = {
-    animate: {
-      y: [-10, 10, -10],
-      transition: {
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  };
-
-  const sparkleVariants = {
-    animate: {
-      scale: [1, 1.2, 1],
-      opacity: [0.5, 1, 0.5],
-      transition: {
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
+      transition: { duration: 0.6, ease: [0.6, -0.05, 0.01, 0.99] }
     }
   };
 
@@ -109,26 +86,45 @@ const Hero = () => {
       {/* Floating decorative elements */}
       <motion.div
         className="absolute top-20 right-20 hidden lg:block"
-        variants={floatingVariants}
-        animate="animate"
+        animate={{
+          y: [-10, 10, -10]
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
       >
         <Sparkles className="w-8 h-8 text-purple-primary/30" />
       </motion.div>
       
       <motion.div
         className="absolute top-40 left-20 hidden lg:block"
-        variants={sparkleVariants}
-        animate="animate"
-        style={{ animationDelay: '1s' }}
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.5, 1, 0.5]
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
+        }}
       >
         <Zap className="w-6 h-6 text-teal-accent/40" />
       </motion.div>
       
       <motion.div
         className="absolute bottom-40 left-1/3 hidden lg:block"
-        variants={floatingVariants}
-        animate="animate"
-        style={{ animationDelay: '2s' }}
+        animate={{
+          y: [-10, 10, -10]
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2
+        }}
       >
         <Brain className="w-10 h-10 text-purple-primary/25" />
       </motion.div>
