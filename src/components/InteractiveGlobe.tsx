@@ -44,7 +44,8 @@ const Globe = () => {
               transparent: true, 
               opacity: 0.3 
             });
-            lines.push({ geometry, material });
+            const line = new THREE.Line(geometry, material);
+            lines.push(line);
           }
         }
       }
@@ -91,9 +92,9 @@ const Globe = () => {
           </mesh>
         ))}
         
-        {/* Connection lines using proper Line components */}
+        {/* Connection lines using Three.js Line objects */}
         {connectionLines.map((line, index) => (
-          <line key={`line-${index}`} geometry={line.geometry} material={line.material} />
+          <primitive key={`line-${index}`} object={line} />
         ))}
       </group>
 
