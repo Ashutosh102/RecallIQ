@@ -119,6 +119,7 @@
   
   .gradient-text {
     @apply bg-gradient-to-r from-purple-primary to-teal-accent bg-clip-text text-transparent;
+    background-size: 200% 200%;
   }
 
   /* Enhanced glass morphism input styles */
@@ -143,6 +144,11 @@
 
   .glass-input select {
     @apply bg-transparent;
+  }
+
+  /* New radial gradient utility */
+  .radial-gradient {
+    background: radial-gradient(circle at center, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
   }
 }
 
@@ -226,6 +232,19 @@
   }
 }
 
+/* Enhanced particle animation */
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-20px) translateX(10px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(10px) translateX(-10px) rotate(240deg);
+  }
+}
+
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
@@ -240,6 +259,10 @@
 
 .animate-profile-glow {
   animation: profileGlow 2s ease-in-out infinite;
+}
+
+.animate-particle-float {
+  animation: particleFloat 8s ease-in-out infinite;
 }
 
 .shimmer-effect {
