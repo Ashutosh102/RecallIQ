@@ -27,7 +27,7 @@ const Globe = () => {
     return points;
   }, []);
 
-  // Create animated connection lines
+  // Create animated connection lines using proper Three.js Line objects
   const connectionLines = useMemo(() => {
     const lines = [];
     for (let i = 0; i < connectionPoints.length; i++) {
@@ -35,7 +35,16 @@ const Globe = () => {
         if (Math.random() > 0.85) { // Only show some connections
           const distance = connectionPoints[i].distanceTo(connectionPoints[j]);
           if (distance < 3) { // Only connect nearby points
-            lines.push([connectionPoints[i], connectionPoints[j]]);
+            const geometry = new THREE.BufferGeometry().setFromPoints([
+              connectionPoints[i],
+              connectionPoints[j]
+            ]);
+            const material = new THREE.LineBasicMaterial({ 
+              color: '#8B5CF6', 
+              transparent: true, 
+              opacity: 0.3 
+            });
+            lines.push({ geometry, material });
           }
         }
       }
@@ -73,31 +82,18 @@ const Globe = () => {
         />
       </Sphere>
 
-      {/* Connection points */}
+      {/* Connection points and lines */}
       <group ref={linesRef}>
         {connectionPoints.map((point, index) => (
-          <mesh key={index} position={point}>
+          <mesh key={`point-${index}`} position={point}>
             <sphereGeometry args={[0.02]} />
             <meshBasicMaterial color="#22D3EE" />
           </mesh>
         ))}
         
-        {/* Connection lines */}
+        {/* Connection lines using proper Line components */}
         {connectionLines.map((line, index) => (
-          <mesh key={index}>
-            <bufferGeometry>
-              <bufferAttribute
-                attach="attributes-position"
-                count={2}
-                array={new Float32Array([
-                  line[0].x, line[0].y, line[0].z,
-                  line[1].x, line[1].y, line[1].z
-                ])}
-                itemSize={3}
-              />
-            </bufferGeometry>
-            <lineBasicMaterial color="#8B5CF6" transparent opacity={0.3} />
-          </mesh>
+          <line key={`line-${index}`} geometry={line.geometry} material={line.material} />
         ))}
       </group>
 
@@ -114,6 +110,10 @@ const InteractiveGlobe = () => {
         camera={{ position: [0, 0, 8], fov: 60 }}
         dpr={[1, 2]}
         performance={{ min: 0.5 }}
+        onCreated={({ gl }) => {
+          // Ensure WebGL context doesn't get lost
+          gl.debug.checkShaderErrors = true;
+        }}
       >
         <ambientLight intensity={0.2} />
         <pointLight position={[10, 10, 10]} intensity={0.5} color="#8B5CF6" />
