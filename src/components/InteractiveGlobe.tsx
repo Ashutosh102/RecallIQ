@@ -1,81 +1,52 @@
 
-import { useRef, useMemo, useEffect } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Sphere, Stars, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-// Globe component with animated connections
+// Simplified Globe component without complex line rendering
 const Globe = () => {
   const globeRef = useRef<THREE.Mesh>(null);
-  const linesRef = useRef<THREE.Group>(null);
-  const { viewport } = useThree();
+  const pointsRef = useRef<THREE.Group>(null);
 
-  // Generate connection points on globe surface
-  const connectionPoints = useMemo(() => {
-    const points = [];
-    for (let i = 0; i < 50; i++) {
-      const lat = (Math.random() - 0.5) * Math.PI;
-      const lon = Math.random() * Math.PI * 2;
-      const radius = 2;
-      
-      const x = radius * Math.cos(lat) * Math.cos(lon);
-      const y = radius * Math.sin(lat);
-      const z = radius * Math.cos(lat) * Math.sin(lon);
-      
-      points.push(new THREE.Vector3(x, y, z));
-    }
-    return points;
-  }, []);
-
-  // Create animated connection lines using proper Three.js Line objects
-  const connectionLines = useMemo(() => {
-    const lines = [];
-    for (let i = 0; i < connectionPoints.length; i++) {
-      for (let j = i + 1; j < connectionPoints.length; j++) {
-        if (Math.random() > 0.85) { // Only show some connections
-          const distance = connectionPoints[i].distanceTo(connectionPoints[j]);
-          if (distance < 3) { // Only connect nearby points
-            const geometry = new THREE.BufferGeometry().setFromPoints([
-              connectionPoints[i],
-              connectionPoints[j]
-            ]);
-            const material = new THREE.LineBasicMaterial({ 
-              color: '#8B5CF6', 
-              transparent: true, 
-              opacity: 0.3 
-            });
-            const line = new THREE.Line(geometry, material);
-            lines.push(line);
-          }
-        }
-      }
-    }
-    return lines;
-  }, [connectionPoints]);
-
-  useFrame((state) => {
+  // Simple animation
+  useFrame(() => {
     if (globeRef.current) {
       globeRef.current.rotation.y += 0.005;
     }
-    if (linesRef.current) {
-      linesRef.current.rotation.y += 0.005;
+    if (pointsRef.current) {
+      pointsRef.current.rotation.y += 0.005;
     }
   });
+
+  // Generate simple points on globe surface
+  const connectionPoints = [];
+  for (let i = 0; i < 20; i++) {
+    const lat = (Math.random() - 0.5) * Math.PI;
+    const lon = Math.random() * Math.PI * 2;
+    const radius = 2.1;
+    
+    const x = radius * Math.cos(lat) * Math.cos(lon);
+    const y = radius * Math.sin(lat);
+    const z = radius * Math.cos(lat) * Math.sin(lon);
+    
+    connectionPoints.push([x, y, z]);
+  }
 
   return (
     <>
       {/* Main Globe */}
-      <Sphere ref={globeRef} args={[2, 64, 32]}>
+      <Sphere ref={globeRef} args={[2, 32, 16]}>
         <meshPhongMaterial
           color="#8B5CF6"
           transparent
-          opacity={0.1}
+          opacity={0.15}
           wireframe
         />
       </Sphere>
 
       {/* Outer glow sphere */}
-      <Sphere args={[2.05, 32, 16]}>
+      <Sphere args={[2.05, 16, 8]}>
         <meshBasicMaterial
           color="#22D3EE"
           transparent
@@ -83,23 +54,22 @@ const Globe = () => {
         />
       </Sphere>
 
-      {/* Connection points and lines */}
-      <group ref={linesRef}>
-        {connectionPoints.map((point, index) => (
-          <mesh key={`point-${index}`} position={point}>
-            <sphereGeometry args={[0.02]} />
-            <meshBasicMaterial color="#22D3EE" />
+      {/* Simple connection points */}
+      <group ref={pointsRef}>
+        {connectionPoints.map((position, index) => (
+          <mesh key={`point-${index}`} position={position}>
+            <sphereGeometry args={[0.03]} />
+            <meshBasicMaterial 
+              color="#22D3EE" 
+              transparent
+              opacity={0.8}
+            />
           </mesh>
-        ))}
-        
-        {/* Connection lines using Three.js Line objects */}
-        {connectionLines.map((line, index) => (
-          <primitive key={`line-${index}`} object={line} />
         ))}
       </group>
 
       {/* Ambient stars */}
-      <Stars radius={100} depth={50} count={1000} factor={4} saturation={0} fade />
+      <Stars radius={100} depth={50} count={500} factor={2} saturation={0} fade />
     </>
   );
 };
@@ -108,17 +78,18 @@ const InteractiveGlobe = () => {
   return (
     <div className="relative w-full h-96 md:h-[500px] overflow-hidden">
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 60 }}
-        dpr={[1, 2]}
+        camera={{ position: [0, 0, 6], fov: 60 }}
+        dpr={[1, 1.5]}
         performance={{ min: 0.5 }}
-        onCreated={({ gl }) => {
-          // Ensure WebGL context doesn't get lost
-          gl.debug.checkShaderErrors = true;
+        gl={{ 
+          antialias: true,
+          alpha: true,
+          powerPreference: "default"
         }}
       >
-        <ambientLight intensity={0.2} />
-        <pointLight position={[10, 10, 10]} intensity={0.5} color="#8B5CF6" />
-        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#22D3EE" />
+        <ambientLight intensity={0.3} />
+        <pointLight position={[10, 10, 10]} intensity={0.4} color="#8B5CF6" />
+        <pointLight position={[-10, -10, -10]} intensity={0.2} color="#22D3EE" />
         
         <Globe />
         
@@ -128,12 +99,14 @@ const InteractiveGlobe = () => {
           enableRotate={true}
           autoRotate={true}
           autoRotateSpeed={0.5}
-          minDistance={5}
-          maxDistance={15}
+          minDistance={4}
+          maxDistance={12}
+          enableDamping={true}
+          dampingFactor={0.05}
         />
       </Canvas>
       
-      {/* Gradient overlay for better integration */}
+      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-dark-bg via-transparent to-transparent pointer-events-none" />
     </div>
   );
