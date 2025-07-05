@@ -75,9 +75,9 @@ const PrivacyPolicyPopup = ({ isOpen, onClose }: PrivacyPolicyPopupProps) => {
               className="glass-card p-4 sm:p-6"
             >
               <p className="text-gray-200 text-sm sm:text-base leading-relaxed">
-                <strong>Effective Date:</strong> January 1, 2024
+                <strong>Effective Date:</strong> July 6, 2025
                 <br />
-                <strong>Last Updated:</strong> January 1, 2024
+                <strong>Last Updated:</strong> July 6, 2025
               </p>
             </motion.div>
 
@@ -121,7 +121,7 @@ const PrivacyPolicyPopup = ({ isOpen, onClose }: PrivacyPolicyPopupProps) => {
                   href="mailto:privacy@recalliq.com" 
                   className="text-purple-primary hover:text-teal-accent transition-colors duration-200"
                 >
-                  privacy@recalliq.com
+                  gotodevashu@gmail.com
                 </a>
               </p>
             </motion.div>
