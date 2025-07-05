@@ -1,12 +1,7 @@
-
 import { Button } from '@/components/ui/button';
 import { ArrowDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Suspense, lazy } from 'react';
-
-// Lazy load the globe to improve initial page load
-const InteractiveGlobe = lazy(() => import('./InteractiveGlobe'));
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -43,15 +38,13 @@ const Hero = () => {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-primary/20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-accent/20 rounded-full blur-3xl"></div>
       
-      {/* Interactive 3D Globe */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-full lg:w-1/2 opacity-30 lg:opacity-40">
-        <Suspense fallback={
-          <div className="w-full h-64 sm:h-80 lg:h-96 flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-purple-primary border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        }>
-          <InteractiveGlobe />
-        </Suspense>
+      {/* Hero Image */}
+      <div className="absolute right-10 top-1/4 hidden lg:block opacity-20">
+        <img 
+          src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+          alt="AI Memory Assistant" 
+          className="w-96 h-96 object-cover rounded-2xl"
+        />
       </div>
       
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
