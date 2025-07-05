@@ -31,7 +31,7 @@ const Hero = () => {
     }
   };
 
-  // Animation variants
+  // Animation variants with proper typing
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -47,8 +47,7 @@ const Hero = () => {
     hidden: { opacity: 0, y: 30 },
     visible: { 
       opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
+      y: 0
     }
   };
 
@@ -154,6 +153,7 @@ const Hero = () => {
           <motion.h1 
             className="text-4xl sm:text-6xl lg:text-7xl font-poppins font-bold mb-6 leading-tight"
             variants={itemVariants}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
             Your{' '}
             <motion.span 
@@ -179,6 +179,7 @@ const Hero = () => {
           <motion.p 
             className="text-lg sm:text-xl text-gray-300 mb-8 max-w-2xl mx-auto"
             variants={itemVariants}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
             Never forget important people, conversations, or moments again. RecallIQ uses advanced AI to help you remember and search through your personal interactions with ease.
           </motion.p>
@@ -186,6 +187,7 @@ const Hero = () => {
           <motion.div 
             className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
             variants={itemVariants}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -217,6 +219,7 @@ const Hero = () => {
           <motion.div 
             className="flex justify-center"
             variants={itemVariants}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <motion.button 
               onClick={handleScrollDown} 
