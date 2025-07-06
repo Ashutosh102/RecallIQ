@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
+import { Github, Instagram, Linkedin, Twitter, Mail } from 'lucide-react';
 import PrivacyPolicyPopup from './legal/PrivacyPolicyPopup';
 import TermsOfServicePopup from './legal/TermsOfServicePopup';
 
@@ -10,9 +10,9 @@ const Footer = () => {
 
   const socialLinks = [
     { 
-      icon: Facebook, 
-      href: 'https://facebook.com/recalliq', 
-      label: 'Facebook',
+      icon: Github, 
+      href: 'https://github.com/Ashutosh102', 
+      label: 'GitHub',
       color: 'hover:text-blue-400'
     },
     { 
@@ -23,20 +23,20 @@ const Footer = () => {
     },
     { 
       icon: Instagram, 
-      href: 'https://instagram.com/recalliq', 
+      href: 'https://instagram.com/dev_ashu_102', 
       label: 'Instagram',
       color: 'hover:text-pink-400'
     },
     { 
       icon: Linkedin, 
-      href: 'https://linkedin.com/company/recalliq', 
+      href: 'https://linkedin.com/in/devashu', 
       label: 'LinkedIn',
       color: 'hover:text-blue-500'
     },
     { 
-      icon: Youtube, 
-      href: 'https://youtube.com/@recalliq', 
-      label: 'YouTube',
+      icon: Mail, 
+      href: 'mailto:gotodevashu@gmail.com', 
+      label: 'Gmail',
       color: 'hover:text-red-400'
     }
   ];
