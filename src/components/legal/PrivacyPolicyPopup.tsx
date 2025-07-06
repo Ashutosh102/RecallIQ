@@ -118,7 +118,7 @@ const PrivacyPolicyPopup = ({ isOpen, onClose }: PrivacyPolicyPopupProps) => {
               <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
                 If you have any questions about this Privacy Policy, please contact us at:{' '}
                 <a 
-                  href="mailto:privacy@recalliq.com" 
+                  href="mailto:gotodevashu@gmail.com" 
                   className="text-purple-primary hover:text-teal-accent transition-colors duration-200"
                 >
                   gotodevashu@gmail.com
