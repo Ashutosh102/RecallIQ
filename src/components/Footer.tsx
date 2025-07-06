@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 import PrivacyPolicyPopup from './legal/PrivacyPolicyPopup';
 import TermsOfServicePopup from './legal/TermsOfServicePopup';
 
@@ -7,12 +8,45 @@ const Footer = () => {
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
   const [isTermsOpen, setIsTermsOpen] = useState(false);
 
+  const socialLinks = [
+    { 
+      icon: Facebook, 
+      href: 'https://facebook.com/recalliq', 
+      label: 'Facebook',
+      color: 'hover:text-blue-400'
+    },
+    { 
+      icon: Twitter, 
+      href: 'https://twitter.com/recalliq', 
+      label: 'Twitter',
+      color: 'hover:text-sky-400'
+    },
+    { 
+      icon: Instagram, 
+      href: 'https://instagram.com/recalliq', 
+      label: 'Instagram',
+      color: 'hover:text-pink-400'
+    },
+    { 
+      icon: Linkedin, 
+      href: 'https://linkedin.com/company/recalliq', 
+      label: 'LinkedIn',
+      color: 'hover:text-blue-500'
+    },
+    { 
+      icon: Youtube, 
+      href: 'https://youtube.com/@recalliq', 
+      label: 'YouTube',
+      color: 'hover:text-red-400'
+    }
+  ];
+
   return (
     <>
       <footer className="bg-dark-secondary border-t border-white/10 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Logo and Description */}
+            {/* Logo, Description and Social Media */}
             <div className="md:col-span-2">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-purple rounded-lg flex items-center justify-center">
@@ -20,9 +54,37 @@ const Footer = () => {
                 </div>
                 <span className="text-xl font-poppins font-bold gradient-text">RecallIQ</span>
               </div>
-              <p className="text-gray-300 max-w-md">
+              <p className="text-gray-300 max-w-md mb-6">
                 Your AI-powered memory assistant that helps you remember important people and interactions effortlessly.
               </p>
+              
+              {/* Social Media Icons */}
+              <div className="flex flex-wrap gap-3 sm:gap-4">
+                {socialLinks.map((social, index) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`
+                      group glass-card p-3 sm:p-4 rounded-xl transition-all duration-300 
+                      hover:scale-110 hover:bg-white/10 hover:-translate-y-1 
+                      ${social.color} animate-slide-in-left
+                    `}
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    aria-label={social.label}
+                  >
+                    <social.icon 
+                      className={`
+                        w-5 h-5 sm:w-6 sm:h-6 text-gray-300 transition-all duration-300 
+                        group-hover:scale-110 group-hover:drop-shadow-lg
+                        group-hover:filter group-hover:brightness-125
+                      `} 
+                    />
+                    <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-purple-primary/20 to-teal-accent/20 blur-xl -z-10"></div>
+                  </a>
+                ))}
+              </div>
             </div>
             
             {/* Quick Links */}
