@@ -135,7 +135,7 @@ const TermsOfServicePopup = ({ isOpen, onClose }: TermsOfServicePopupProps) => {
               <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
                 If you have any questions about these Terms of Service, please contact us at:{' '}
                 <a 
-                  href="mailto:legal@recalliq.com" 
+                  href="mailto:gotodevashu@gmail.com" 
                   className="text-purple-primary hover:text-teal-accent transition-colors duration-200"
                 >
                   gotodevashu@gmail.com
