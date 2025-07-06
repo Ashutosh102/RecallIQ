@@ -17,7 +17,7 @@ const Footer = () => {
     },
     { 
       icon: Twitter, 
-      href: 'https://twitter.com/recalliq', 
+      href: 'https://twitter.com/Ashutos56695774', 
       label: 'Twitter',
       color: 'hover:text-sky-400'
     },
