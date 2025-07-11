@@ -2,7 +2,7 @@
 # 🧠 RecallIQ - AI-Powered Memory Assistant
 
 <div align="center">
-  <img src="public/recalliq.png" alt="RecallIQ Logo" width="120" height="120">
+  <img src="public/recalliq.png" alt="RecallIQ Logo" width="1000" height="1000">
   
   [![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4.svg)](https://lovable.dev)
   [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -12,7 +12,7 @@
 
   **Never forget important people, conversations, or moments again**
   
-  [🚀 Live Demo](https://preview--recall-iq.lovable.app) · [📖 Documentation](https://docs.lovable.dev) · [🐛 Report Bug](https://github.com/your-username/recalliq/issues)
+  [🚀 Live Demo](https://recalliq.netlify.app) · [📖 Documentation](https://github.com/Ashutosh102/recalliq/edit/main/README.md) · [🐛 Report Bug](https://github.com/Ashutosh102/recalliq/issues)
 </div>
 
 ---
@@ -235,7 +235,7 @@ flowchart TD
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/recalliq.git
+   git clone https://github.com/Ashutosh102/recalliq.git
    cd recalliq
    ```
 
@@ -311,7 +311,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Built with [Lovable](https://lovable.dev) - The AI-powered development platform
 - UI components from [Shadcn/UI](https://ui.shadcn.com)
 - Icons by [Lucide](https://lucide.dev)
 - 3D graphics powered by [Three.js](https://threejs.org)
@@ -320,10 +319,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📧 Email: support@recalliq.com
-- 💬 Discord: [Join our community](https://discord.gg/recalliq)
-- 📖 Documentation: [docs.recalliq.com](https://docs.recalliq.com)
-- 🐛 Issues: [GitHub Issues](https://github.com/your-username/recalliq/issues)
+- 📧 Email: gotodevashu@gmail.com
+- 📖 Documentation: [docs.recalliq.com](https://github.com/Ashutosh102/recall-genesis-ai/edit/main/README.md)
+- 🐛 Issues: [GitHub Issues](https://github.com/Ashutosh102/recalliq/issues)
 
 ---
 
