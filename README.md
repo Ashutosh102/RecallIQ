@@ -320,7 +320,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 - 📧 Email: gotodevashu@gmail.com
-- 📖 Documentation: [docs.recalliq.com](https://github.com/Ashutosh102/recall-genesis-ai/edit/main/README.md)
+- 📖 Documentation: [docs.recalliq.com](https://github.com/Ashutosh102/recall-genesis-ai/main/README.md)
 - 🐛 Issues: [GitHub Issues](https://github.com/Ashutosh102/recalliq/issues)
 
 ---
